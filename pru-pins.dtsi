@@ -1,0 +1,32 @@
+#include "subarctic/pinctrl.h"
+#include "bone/pins.h"
+ 
+USES_PIN( P9_41 ); // 41a pru 0 in 16
+USES_PIN( P9_30 ); // pru 0 in 2
+USES_PIN( P9_91 ); // 41b pru 0 in 6
+USES_PIN( P9_92 ); // 42b pru 0 in 5 
+USES_PIN( P9_24 ); // uart p txd
+USES_PIN( P9_26 ); // uart p rxd
+USES_PIN( P9_42 ); // 42 ecap0
+ 
+ 
+&pruss {
+        pinctrl-names = "default";
+        pinctrl-0 = <&pruss_pins>;
+};
+ 
+&am33xx_pinmux {
+        pruss_pins: pruss {
+                pinctrl-single,pins = <
+                        
+			PIN_OUT_PULLUP ( P9_24, 5 ) // uart p txd
+                        PIN_IN_PULLUP( P9_26, 5 ) // uart P rxd
+                        PIN_IN_PULLUP( P9_30, 6 )  // pru 0 in 2
+                        PIN_IN_PULLUP( P9_41a, 5 )  // pru 0 in 4
+                        PIN_IN_PULLUP( P9_41b, 7) // pru 0 in  
+                        PIN_OUT_PULLUP( P9_42a, 3) // ecap 4
+			PIN_OUT_PULLUP( P9_42b, 5) // pru out 4
+
+                >;
+        };
+};
