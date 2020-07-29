@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="pushButton_13">
+  <widget class="QPushButton" name="pushButton_submit">
    <property name="geometry">
     <rect>
      <x>19</x>
@@ -33,17 +33,24 @@
     <string>Confirm</string>
    </property>
   </widget>
-  <widget class="QTextBrowser" name="textBrowser">
+  <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>20</y>
-     <width>256</width>
+     <width>261</width>
      <height>41</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -54,7 +61,7 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="2">
-     <widget class="QPushButton" name="pushButton_4">
+     <widget class="QPushButton" name="pushButton3">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -68,7 +75,7 @@
      </widget>
     </item>
     <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButton1">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -82,7 +89,7 @@
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pushButton8">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -96,7 +103,7 @@
      </widget>
     </item>
     <item row="1" column="2">
-     <widget class="QPushButton" name="pushButton_7">
+     <widget class="QPushButton" name="pushButton6">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -110,7 +117,7 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="pushButton4">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -124,7 +131,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="pushButton2">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -138,7 +145,7 @@
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QPushButton" name="pushButton_8">
+     <widget class="QPushButton" name="pushButton7">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -152,7 +159,7 @@
      </widget>
     </item>
     <item row="2" column="2">
-     <widget class="QPushButton" name="pushButton_9">
+     <widget class="QPushButton" name="pushButton9">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -166,7 +173,7 @@
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QPushButton" name="pushButton_12">
+     <widget class="QPushButton" name="pushButton_erase">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -180,7 +187,7 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QPushButton" name="pushButton_10">
+     <widget class="QPushButton" name="pushButton0">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -194,7 +201,7 @@
      </widget>
     </item>
     <item row="3" column="2">
-     <widget class="QPushButton" name="pushButton_11">
+     <widget class="QPushButton" name="pushButton_clear">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -208,7 +215,7 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QPushButton" name="pushButton_6">
+     <widget class="QPushButton" name="pushButton5">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
