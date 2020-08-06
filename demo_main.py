@@ -8,10 +8,9 @@ from random import randint
 import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QMessageBox
 from numpad_modal import NumPadPopup
-#from numpad_popup import numpadPopup
+import Adafruit_BBIO.GPIO as gpio
 from demo_window import Ui_MainWindow # This file holds our MainWindow and all design related things
               # it also keeps events etc that we defined in Qt Designer
-
 
 class MainWindow(QtWidgets.QMainWindow):
     
@@ -28,8 +27,9 @@ class MainWindow(QtWidgets.QMainWindow):
     weight_line = None 
     time_array = [0]
     position_array = [0]
-    weight_array = [0] 
-
+    weight_array = [0]
+    motor = pruss.ecap.pwm
+    
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent=parent)
         self.ui.setupUi(self)
@@ -41,7 +41,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.bttn_start.clicked.connect(self.StartButton_on_click)
         self.ui.bttn_reset.clicked.connect(self.ResetButton_on_click)
         self.ui.bttn_stop.clicked.connect(self.StopButton_on_click)
-        
+        self.ui.bttn_setMotorSpeed.clicked.connect(self.SetMotorSpeed_on_click)
+
+        # setup plot
         pen_weight = pg.mkPen(color=(255,255,0), width=5)
         pen_position = pg.mkPen(color=(0, 0, 255), width=5)
         styles = {'color':'y', 'font-size':'25px'}
@@ -49,13 +51,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.graph.setLabel('bottom', 'Time (s)', **styles)
         self.position_line = self.ui.graph.plot([0], [0], pen = pen_position)
         self.weight_line = self.ui.graph.plot([0], [0], pen = pen_weight)
+        
+        #setup timer
         self.timer.setInterval(50)
         self.timer.timeout.connect(self._updatePlot)
+        
+        #setup_pruss
         self.pruss.uart.initialize(baudrate = 9600)
         self.core_0.load('decoder.bin')
         self.core_0.run()
         self.position = self.pruss.dram0.map( uint32 )
         self._init_EM100()
+        pruss.ecap.pwm.initialize( 200000 )
 
     def _trimMessage(self,message,start,finish):
         return message[start-1:finish-1]
@@ -149,6 +156,18 @@ class MainWindow(QtWidgets.QMainWindow):
         response = self.pruss.uart.io.readline(newline =b'\r').decode('ascii')
         QMessageBox.about(self, "Response", response)
 
+    @pyqtSlot()
+    def SetMotorSpeed_on_click(self):
+        self.setEnabled(False)
+        motor_freq = NumPadPopup()
+        motor_freq.show()
+        motor_freq.exec_()
+        self.ui.tb_span.setText(str(motor_freq.result))
+        motor_dutyCycle = NumPadPopup()
+        motor_dutyCycle.show()
+        motor_dutyCycle.exec()
+        self.ui.tb_dutyCycle.setText(str(motor_dutyCycle.result))
+        self.setEnabled(True)
 
     @pyqtSlot()
     def TareScaleButton_on_click(self):
@@ -173,6 +192,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot() 
     def StartButton_on_click(self):
+        self.motor.period = int(self.ui.tb_dutyCycle.text
+        self.motor.duty_cycle = int(self.ui.tb_dutyCycle.text)
         #self.pruss.uart.io.write(b'SN\r')
         self.timer.start()
 
