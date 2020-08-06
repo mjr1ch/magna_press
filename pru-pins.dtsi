@@ -17,15 +17,14 @@ USES_PIN( P9_42 ); // 42 ecap0
  
 &am33xx_pinmux {
         pruss_pins: pruss {
-                pinctrl-single,pins = <
-                        
+                pinctrl-single,pins = < 
 			PIN_OUT_PULLUP ( P9_24, 5 ) // uart p txd
                         PIN_IN_PULLUP( P9_26, 5 ) // uart P rxd
                         PIN_IN_PULLUP( P9_30, 6 )  // pru 0 in 2
                         PIN_IN_PULLUP( P9_41a, 5 )  // pru 0 in 4
-                        PIN_IN_PULLUP( P9_41b, 7) // pru 0 in  
-                        PIN_OUT_PULLUP( P9_42a, 3) // ecap 4
-			PIN_OUT_PULLUP( P9_42b, 5) // pru out 4
+                        PIN_IN_NOPULL( P9_41b, 7) // pru 0 in  
+                        PIN_OUT_PULLDOWN( P9_42a, 3) // ecap 4
+ 			PIN_OUT_NOPULL( P9_42b, 7) // pru out 4
 
                 >;
         };
