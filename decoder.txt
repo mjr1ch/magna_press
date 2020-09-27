@@ -4,7 +4,7 @@ Source File 1 : 'decoder.pasm' (32 Instructions Generated)
     2 :                   :  
     3 :                   :  #define counter r10
     4 :                   :  #define pin_A   r31.t2
-    5 :                   :  #define pin_B   r31.t6
+    5 :                   :  #define pin_B   r31.t16
     6 :                   :  
     7 :                   :  .macro increment
     8 :                   :      add     counter, counter, 1
@@ -30,7 +30,7 @@ Source File 1 : 'decoder.pasm' (32 Instructions Generated)
    27 :                   :  
    28 :                   :  Alow:
    29 : 0x0006 0xc902ff00 :      wbs     pin_A                   // A is low, wait for A rise
-   30 : 0x0007 0xd106ff12 :      bbs     Arise_B1, pin_B         // A rising edge, check B
+   30 : 0x0007 0xd110ff12 :      bbs     Arise_B1, pin_B         // A rising edge, check B
    31 :                   :  
    32 : 0x0008 0x0101eaea :      increment                       // A rising edge with B low
       : 0x0009 0x8100388a : 
@@ -42,7 +42,7 @@ Source File 1 : 'decoder.pasm' (32 Instructions Generated)
       : 0x000c 0x8100388a : 
    38 :                   :  
    39 :                   :  Blow:
-   40 : 0x000d 0xc906ff00 :      wbs     pin_B                   // B is low, wait for B rise
+   40 : 0x000d 0xc910ff00 :      wbs     pin_B                   // B is low, wait for B rise
    41 : 0x000e 0xd102ff04 :      bbs     A1_Brise, pin_A         // B rising edge, check A
    42 :                   :  
    43 :                   :  
@@ -56,7 +56,7 @@ Source File 1 : 'decoder.pasm' (32 Instructions Generated)
    49 :                   :  
    50 :                   :  Ahigh:
    51 : 0x0014 0xd102ff00 :      wbc     pin_A                   // A is high, wait for A fall
-   52 : 0x0015 0xcf06fff6 :      bbc     Afall_B0, pin_B         // A falling edge, check B
+   52 : 0x0015 0xcf10fff6 :      bbc     Afall_B0, pin_B         // A falling edge, check B
    53 :                   :  
    54 : 0x0016 0x0101eaea :      increment                       // A falling edge with B high             
       : 0x0017 0x8100388a : 
@@ -67,7 +67,7 @@ Source File 1 : 'decoder.pasm' (32 Instructions Generated)
       : 0x001a 0x8100388a : 
    59 :                   :       
    60 :                   :  Bhigh:   
-   61 : 0x001b 0xd106ff00 :      wbc     pin_B                   // B is high, wait for B fall 
+   61 : 0x001b 0xd110ff00 :      wbc     pin_B                   // B is high, wait for B fall 
    62 : 0x001c 0xcf02ffe8 :      bbc     A0_Bfall, pin_A         // B falling edge, check A 
    63 :                   :                                                                       
    64 : 0x001d 0x0501eaea :      decrement                       // B falling edge with A high 

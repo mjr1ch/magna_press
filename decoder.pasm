@@ -6,17 +6,17 @@
  
  .macro increment
      add     counter, counter, 1
-     sbco    &counter, c28, 0, 4     // store counter to memory
+     sbco    &counter, c24, 0, 4     // store counter to memory
  .endm
  
  .macro decrement
      sub     counter, counter, 1
-     sbco    &counter, c28, 0, 4     // store counter to memory
+     sbco    &counter, c24, 0, 4     // store counter to memory
  .endm
  
  
      mov     counter, 0
-     sbco    &counter, c28, 0, 4     // store initial counter to memory
+     sbco    &counter, c24, 0, 4     // store initial counter to memory
  
  // jump into right place of the loop based on initial state of A
      bbs     Ahigh,    pin_A
