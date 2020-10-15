@@ -4,7 +4,7 @@
 
 
 #define position_var ((struct other_pru_vars *)0x00002000)
-#define findmax_vars ((struct shared_pru_vars *)0x00000000)
+#define sharedpru_vars ((struct shared_pru_vars *)0x00000000)
 
 typedef uint8_t u8;
 
@@ -26,7 +26,10 @@ struct shared_pru_vars {
 			struct Timestamp time; 
 			uint32_t position;
                         uint8_t force;
-                };
+			uint8_t duty_cycle;
+			uint8_t wave_form;
+       			char response[8];
+		};
 
 
 
@@ -77,8 +80,10 @@ uint32_t receive_measurement()
             		__halt();
         		value = value * 10 + ( msg[i] - '0' );
     		}
- 
-   	 return value;
+	
+	for( i = 0; i < len; i++)
+		sharedpru_vars->response[i] = msg[i];
+   	return value;
 }
 
 
@@ -95,31 +100,25 @@ struct Timestamp timestamp()
 
 void main()
 {
-        uint32_t currentPosition;
-        uint32_t maxForcePosition = 0;
         uint8_t force = 0; 
-        uint8_t maxForce = 0;
         
 	CT_UART.THR = 'S';
         CT_UART.THR = 'N';
         CT_UART.THR = '\r';
-	CT_ECAP.ECCTL1 = 1 << 15;  
-	CT_ECAP.ECCTL2 = 1 << 4;
         
         for(;;) {
-		force = receive_measurement();
                 
         // parse and interpret message from load cell
-
-        // read position value from decoder and run control loop
-        	currentPosition = position_var->position;
-        	if (force > maxForce){
-                	maxForcePosition = currentPosition;
-                	maxForce = force;
-      	 	}
-        // update sharedVars for GUI access
-        	findmax_vars->position =  maxForcePosition;
-        	findmax_vars->force = maxForce;
-		findmax_vars->time = timestamp();
+		force = receive_measurement();
+ 	// get time measurement
+	 	struct Timestamp ts = timestamp();
+		
+	// update sharedVars for GUI access
+        	sharedpru_vars->position = position_var->position; 
+        	sharedpru_vars->force = force;
+		sharedpru_vars->time.ns = ts.ns;
+		sharedpru_vars->time.s = ts.s;
+		sharedpru_vars->duty_cycle = 0;
+		sharedpru_vars->wave_form = 0;
         }
 }

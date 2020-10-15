@@ -4,7 +4,7 @@
 
 
 #define position_var ((struct other_pru_vars *)0x00002000)
-#define findmax_vars ((struct shared_pru_vars *)0x00000000)
+#define sharedpru_vars ((struct shared_pru_vars *)0x00000000)
 
 typedef uint8_t u8;
 
@@ -95,10 +95,7 @@ struct Timestamp timestamp()
 
 void main()
 {
-        uint32_t currentPosition;
-        uint32_t maxForcePosition = 0;
         uint8_t force = 0; 
-        uint8_t maxForce = 0;
         
 	CT_UART.THR = 'S';
         CT_UART.THR = 'N';
@@ -107,19 +104,13 @@ void main()
 	CT_ECAP.ECCTL2 = 1 << 4;
         
         for(;;) {
-		force = receive_measurement();
                 
         // parse and interpret message from load cell
-
-        // read position value from decoder and run control loop
-        	currentPosition = position_var->position;
-        	if (force > maxForce){
-                	maxForcePosition = currentPosition;
-                	maxForce = force;
-      	 	}
-        // update sharedVars for GUI access
-        	findmax_vars->position =  maxForcePosition;
-        	findmax_vars->force = maxForce;
-		findmax_vars->time = timestamp();
+		force = receive_measurement();
+  
+	// update sharedVars for GUI access
+        	sharedpru_vars->position = position_var->position; 
+        	sharedpru_vars->force = force;
+		sharedpru_vars->time = timestamp();
         }
 }
