@@ -1,124 +1,114 @@
 #include <stdint.h>
 #include "pru_uart.h"
-#include "pru_ecap.h" 
+#include "pru_ecap.h"
 
 
-#define position_var ((struct other_pru_vars *)0x00002000)
-#define sharedpru_vars ((struct shared_pru_vars *)0x00000000)
+// python initialization:
+//  pruss.ecap.pwm.initialize( 2**32 )
+ 
+struct SharedVars {
+    uint32_t position;
+    int32_t force;
+    uint8_t duty_cycle;
+    uint8_t wave_form;
+};
 
-typedef uint8_t u8;
+// encoder position in other PRU core's memory
+#define position_var ((uint32_t const volatile *)0x00002000)
 
+// strcuture holding PRU variables from the loop
+far struct SharedVars volatile shared_pru1_vars __attribute__((location(0x10000)));
 
-struct Timestamp {
-			uint32_t s;
-			uint32_t ns;
-		};
+// returns timestamp in units of 65536 pru cycles (= 0.32768 ms).
+// must be called at least once every 21 seconds to ensure correct timekeeping.
+// note: timestamp wraps every 16 days (approximately).
 
-
-
-
-struct other_pru_vars {
-                        uint32_t position;
-                };
-
-
-struct shared_pru_vars {
-			struct Timestamp time; 
-			uint32_t position;
-                        uint8_t force;
-			uint8_t duty_cycle;
-			uint8_t wave_form;
-       			char response[8];
-		};
-
-
-
-//far struct shared_pru_vars volatile *const findmax_vars __attribute__((location(0x10000)));
-//far struct shared_pru_vars volatile findmax_vars __attribute__((location(0x10000)));
+uint32_t timestamp()
+{
+    static uint32_t now = 0;
+    return now += ( (uint16_t)( CT_ECAP.TSCTR >> 16 ) - (uint16_t)now );
+}
 
 
 // receive byte from uart
 static inline char uart_recv_byte()
 {
-    	for(;;) {
-        	u8 lsr = CT_UART.LSR;
-        	if( lsr & 0x1e )
-            		__halt();  // receive-error occurred
-        	if( lsr & 0x01 )
-            		return (char) CT_UART.RBR;
-    	}
+    for(;;) {
+        uint8_t lsr = CT_UART.LSR;
+        if( lsr & 0x1e )
+            __halt();  // receive-error occurred
+        if( lsr & 0x01 )
+            return (char) CT_UART.RBR;
+    }
 }
 
 // receive CR-terminated line from uart
-static inline unsigned uart_recv_line( char msg[], u8 maxlen )
+static inline uint8_t uart_recv_line( char volatile msg[], uint8_t maxlen )
 {
-    	u8 len = 0;
+    uint8_t len = 0;
 
-    	for(;;) {
-        	char c = uart_recv_byte();
-        	if( c == '\r' )
-            		break;  // found end of line
-        		if( len == maxlen )
-            			__halt();  // line does not fit in buffer
-       				 msg[ len++ ] = c;
-    	}
+    for(;;) {
+        char c = uart_recv_byte();
+        if( c == '\r' )
+            break;  // found end of line
+        if( len == maxlen )
+            __halt();  // line does not fit in buffer
+        msg[ len++ ] = c;
+    }
 
-    	return len;
+    return len;
 }
 
-uint32_t receive_measurement()
+// receive and parse measurement message from load cell
+int32_t receive_measurement()
 {
-    	static char msg[8];
-    	u8 i;
-    	u8 len = uart_recv_line(msg, sizeof msg );
-    	if( len != 8 || msg[0] != 'N')
-        	__halt();
- 
-    	uint32_t value = 0;
-    	for( i = 2; i < len; i++ ) {
-        	if( msg[i] < '0' || msg[i] > '9' )
-            		__halt();
-        		value = value * 10 + ( msg[i] - '0' );
-    		}
-	
-	for( i = 0; i < len; i++)
-		sharedpru_vars->response[i] = msg[i];
-   	return value;
+    // allocate buffer at fixed address for debugging convenience
+    static char volatile msg[8] __attribute__((location(0x1f00)));
+
+    // receive line from uart
+    uint8_t len = uart_recv_line( msg, sizeof msg );
+
+    // verify length and prefix
+    if( len != 8 || msg[0] != 'N' || (msg[1] != '+' && msg[1] != '-'))
+        __halt();
+
+    // parse the remainder as integer
+    int32_t value = 0;
+    uint8_t i;
+    for( i = 2; i < len; i++ ) {
+        if( msg[i] < '0' || msg[i] > '9' )
+            __halt();
+        value = value * 10 + ( msg[i] - '0' );
+    }
+    if (msg[1] == '-')
+	    value *= -1;
+
+    return value;
 }
 
-
-
-struct Timestamp timestamp()
-{
-	static struct Timestamp now = {};
-	uint32_t ns = CT_ECAP.TSCTR * 5;
-	if( ns < now.ns )
-		++now.s;
-	now.ns = ns;
-	return now;
-}
 
 void main()
 {
-        uint8_t force = 0; 
-        
-	CT_UART.THR = 'S';
+      	int32_t force = 0; 
+        CT_UART.THR = 'S';
         CT_UART.THR = 'N';
         CT_UART.THR = '\r';
         
         for(;;) {
                 
-        // parse and interpret message from load cell
+	// parse and interpret message from load cell
 		force = receive_measurement();
- 	// get time measurement
-	 	struct Timestamp ts = timestamp();
+        
+	// get position
+        uint32_t position = *position_var;
+
+	// grabtime 
+	uint32_t time = timestamp();	
 		
 	// update sharedVars for GUI access
-        	sharedpru_vars->position = position_var->position; 
-        	sharedpru_vars->force = force;
-		sharedpru_vars->time.ns = ts.ns;
-		sharedpru_vars->time.s = ts.s;
-		sharedpru_vars->duty_cycle = 0;
-		sharedpru_vars->wave_form = 0;
+        	shared_pru1_vars.position = position; 
+        	shared_pru1_vars.force = force;
+		shared_pru1_vars.duty_cycle = 0;
+		shared_pru1_vars.wave_form = 0;
         }
 }

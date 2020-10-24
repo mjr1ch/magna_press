@@ -123,9 +123,9 @@
    <widget class="QPushButton" name="bttn_captureZero">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>160</x>
       <y>0</y>
-      <width>251</width>
+      <width>111</width>
       <height>28</height>
      </rect>
     </property>
@@ -144,7 +144,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>251</width>
+      <width>111</width>
       <height>28</height>
      </rect>
     </property>
@@ -496,6 +496,12 @@
      </property>
     </widget>
     <widget class="QSlider" name="hs_motorControl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="maximum">
       <number>100</number>
      </property>
@@ -570,6 +576,44 @@
       <string>Stop</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="bttn_resetTare">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>40</y>
+      <width>111</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <italic>false</italic>
+     </font>
+    </property>
+    <property name="text">
+     <string>Reset Tare</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bttn_systemZero">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>0</y>
+      <width>111</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <italic>false</italic>
+     </font>
+    </property>
+    <property name="text">
+     <string>System Zero</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

@@ -2,7 +2,7 @@ from uio.ti.icss import Icss
 from uio.ti.pwmss import Pwmss
 from ctypes import c_uint32 as uint32, c_uint8 as uint8, c_uint64 as uint64, c_char as char, c_int32 as int32, Structure 
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer, QThread, QObject
+from PyQt5.QtCore import pyqtSlot, QTimer
 import sys # We need sys so that we can pass argv to QApplication
 import cursor
 import array 
@@ -16,6 +16,26 @@ from demo_window import Ui_MainWindow # This file holds our MainWindow and all d
               # it also keeps events etc that we defined in Qt Designer
 
 
+class TimeStamp( Structure ):
+    _fields_ = [ 
+            ("seconds",uint32),
+            ("nano_seconds",uint32)
+        ]
+
+class ResponseMessage( Structure ):
+    _fields_ = [ 
+            ("spot_0",char),
+            ("spot_1",char),
+            ("spot_2",char),
+            ("spot_3",char),
+            ("spot_4",char),
+            ("spot_5",char),
+            ("spot_6",char),
+            ("spot_7",char)
+        ]
+
+
+
 class PruVars( Structure ): 
     _fields_ = [ 
             ("position", uint32), # in encoder pulsest 1140 per Revo 
@@ -23,31 +43,6 @@ class PruVars( Structure ):
             ("duty_cycle", uint8), # duty cycle 0%-100%
             ("wave_shape",uint8), # wave shape input  
         ]
-
-
-class Communicate(QObject):
-
-    newdata = pyqtSignal(int, int)
-
-
-class PollPRUThread(QThread):
-    
-    def __init__(self,core,pruvars):
-        QThread.__init__(self)
-        self.pru_core = core
-        self.vars = pruvars
-        self.c = Communicate()
-
-    def run(self):
-        _running = True
-        self.pru_core.run()
-        while(1):
-            weight = self.vars.force
-            position = self.vars.position
-            self.c.newdata.emit(weight,position)
-            sleep(0.1)
-            if (self.pru_core.halted):
-                break
 
 class MainWindow(QtWidgets.QMainWindow):
     
@@ -72,8 +67,6 @@ class MainWindow(QtWidgets.QMainWindow):
     minloadposition = None 
     _running = None
     _last_timestamp_cycles = 0
-    pru_thread = 0
-    zero_offset = 0
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent=parent)
@@ -87,6 +80,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.bttn_reset.clicked.connect(self.ResetButton_on_click)
         self.ui.bttn_resetTare.clicked.connect(self.ResetTareButton_on_click)
         self.ui.bttn_systemZero.clicked.connect(self.SystemZeroButton_on_click)
+        self.ui.bttn_stopRun.clicked.connect(self.StopRunButton_on_click)
+        self.ui.bttn_stopRun.clicked.connect(self.StopRunButton_on_click)
         self.ui.bttn_stopRun.clicked.connect(self.StopRunButton_on_click)
         self.ui.bttn_setTopBottom.clicked.connect(self.SetTopBottom_on_click)
         self.ui.hs_motorControl.valueChanged.connect(self.MotorControlSlider_on_valuechange)
@@ -117,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.core_0.load('decoder.bin')
         self.core_0.run()
         self.position = self.pruss.dram0.map( uint32 )
-        self.pruvars = self.pruss.dram2.map( PruVars )
+       # self.pruvars = self.pruss.dram2.map( PruVars )
         self._Init_EM100()
         self.motor.initialize(self.period,1) 
 
@@ -182,21 +177,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.position_line.setData(self.time_array, self.position_array) 
         self.weight_line.setData(self.time_array, self.weight_array) 
 
-    def _UpdateGui(self,weight,position):
-        time_point = self.timestamp_seconds()
-        mm = int(self.timestamp_seconds()/60)
-        ss = int(time_point % 60 )
-        ms = int((time_point % 1)*1000) 
-        time = '{}:{}:{}'.format(mm,ss,ms)
-        angle = self._ConvertToAngle(position)
-        if (angle >= 180): 
-            angle = 360 - angle
-        self._UpdatePlot(time_point,weight,angle)
-        print("{} {} {}".format(time,angle,weight))
-        self.ui.lcd_timer.display(time)
-        self.ui.lcd_weight.display(weight)
-        self.ui.lcd_position.display(angle)
-
+    def _DecodeCharString(self,response):
+        value = response.spot_0.decode('ascii') + response.spot_1.decode('ascii') + response.spot_2.decode('ascii') + \
+                response.spot_3.decode('ascii') + response.spot_4.decode('ascii') + response.spot_5.decode('ascii') + \
+                response.spot_6.decode('ascii') + response.spot_7.decode('ascii') 
+        return value 
+    
     def _ConvertToAngle(self,pos):
         p = float((pos + 1) % 1440)
         a = float(p*360/1440)
@@ -205,6 +191,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _MotorGoToAngle(self,target):
         
         current_angle = self._ConvertToAngle(self.position.value)
+        print(current_angle)
         
         if (abs(target - current_angle)  >= 180 ):
             self.motor.ld_compare_a = int(self.period/8)
@@ -216,6 +203,7 @@ class MainWindow(QtWidgets.QMainWindow):
         while (abs(current_angle - target) > 0.001):
             sleep(0.001)
             togo = abs(target- current_angle)
+            print("Target angle is {} and Current Angle is {} the difference is {}".format(target,current_angle,togo))
             current_angle = self._ConvertToAngle(self.position.value)
         self.motor.ld_compare_a = 0 
         self.motor.ld_compare_b = 0 
@@ -253,10 +241,10 @@ class MainWindow(QtWidgets.QMainWindow):
         while(1):
             angle = self._ConvertToAngle(self.pruvars.position) 
             weight = self.pruvars.force
-            print("postion = {} Angle = {}, Force = {}".format(self.position.value,self.pruvars.position,weight))
+            print("Angle = {}, Force = {}".format(angle,weight))
             counter = counter + 1
             sleep(0.5)
-            if (counter > 30):
+            if (counter > 50):
                 break
         self.pruss.uart.io.write( b'FFV\r', discard=True, flush=True )  # interrupt continuous transmission
         sleep( 0.1 )  # make sure that response has been received
@@ -269,8 +257,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.maxloadposition = angle
         self.minloadposition = float((angle + 180) % 360)
         self.ui.lcd_position.display(angle)
+        time = self.pruvars.time.seconds
+        self.ui.lcd_timer.display(time)
         self.GoBottomButton_on_click()
-        self.zero_offset = self.position.value
 
     @pyqtSlot()
     def GoTopButton_on_click(self):
@@ -319,13 +308,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot() 
     def StartButton_on_click(self):
-        self.c = Communicate()
-        self.core_1.load('record_run.out')
+        self._running = True
+        #self.core_1.load('record_run.out')
+        #self.core_1.run()
         self.last_timestamp_cycles = 0
         self.pruss.ecap.pwm.initialize( 2**32 )
-        self.pru_thread = PollPRUThread(self.core_1,self.pruvars)
-        self.pru_thread.c.newdata.connect(self._UpdateGui)
-        self.pru_thread.start()
+        while(self._running):
+            time_point = 0 #self.timestamp_seconds()
+            #mm = int(self.timestamp_seconds()/60)
+            #ss = int(time_point % 60 )
+            #ms = int((time_point % 1)*1000) 
+            time = 0 # '{}:{}:{}'.format(mm,ss,ms)
+            weight = 0 #self.pruvars.force
+            print("private {}".format(self.position))
+            angle = self.position.value # self._ConvertToAngle(self.position.value)
+            if (angle >= 180): 
+                angle = 360 - angle
+            self._UpdatePlot(time_point,weight,angle)
+            QtGui.QApplication.processEvents()
+            #self.ui.lcd_timer.display(time)
+            #:sleep(0.01)
+           # self.ui.lcd_weight.display(self.pruvars.force)
+            self.ui.lcd_position.display(angle)
+      ##  self.pruss.uart.io.write( b'FFV\r', discard=True, flush=True )  # interrupt continuous transmission
+        sleep( 0.1 )  # make sure that response has been received
+      ##  self.pruss.uart.io.discard()  # discard response
 
     @pyqtSlot()
     def StopMotorButton_on_click(self):
@@ -359,12 +366,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def StopRunButton_on_click(self):
-        self.pruss.uart.io.write( b'FFV\r', discard=True, flush=True )  # interrupt continuous transmission
-        sleep( 0.1 )  # make sure that response has been received
-        self.pruss.uart.io.discard()  # discard response
         print("stopping")
-        self.pru_thread.quit()
         self.core_1.halt()
+        self._running = False 
 
 def main():
     app = QApplication(sys.argv) # A new instance of QApplicatio0n
