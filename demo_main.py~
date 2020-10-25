@@ -253,45 +253,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def SetTopBottom_on_click(self):
-        self.motor.ld_compare_a = int(self.period/8)
+        self.motor.ld_compare_a = int(self.period/10)
         self.motor.ld_compare_b = 0
         self.core_1.load('find_max.out')
         self.core_1.run()
         counter = 0
         max_weight = 0 
-        max_position = 0
         prev_weight = 0 
-        max_counter = 0
-        desc_counter = 0 
+        flat_counter = 0
         while(1):
             angle = self._ConvertToAngle(self.pruvars.position) 
             weight = self.pruvars.force
-            print("Counter {} Max_Counter {} Descreasing Counter {}".format(counter,max_counter,desc_counter))
-            if (weight >= prev_weight):
-                desc_counter = 0 
-                print("weight increaseing new max weight set")
-                if (weight > max_weight):
-                    max_weight = weight
-                    max_position = angle
-                    max_counter = 0
-                else:
-                    print("weight increasing but below max weight")
-                    max_counter = max_counter + 1
-            else: 
-                max_counter = max_counter + 1
-                if (desc_counter > 3):
-                    print("Weight dscresing for too long changing direction")
-                    self._ChangeDirection()
-                    desc_counter = 0 
-                else: 
-                    print("Weight descrsing but not long enough to give up this way")
-                    desc_counter = desc_counter + 1
-            if (max_counter > 30 or counter > 500):
-                break
+            #print("postion = {} Angle = {}, Force = {}".format(self.position.value,angle,weight))
             counter = counter + 1
+            sleep(0.5)
+            if (weight < prev_weight):
+                print("weight decreasing changing direction")
+                flat_counter = 0 
+                self._ChangeDirection()
+            elif (weight > prev_weight):
+                flat_counter = 0
+                print("Current {} Max {} weight is growing".format(weight,max_weight))
+                max_weight = weight
+            elif ( weight == prev_weight):
+                print("Current {} Max {} weight has flatlined".format(weight,max_weight))
+                if (flat_counter >= 3):
+                    print("flatlined on wieght switching direction")
+                    self._ChangeDirection()
+                    flat_counter = 0
+                else: 
+                    print("Current Flatline {} incrementing".format(flat_counter))
+                    flat_counter = flat_counter + 1
+            if (counter > 50):
+                break
             prev_weight = weight
-            sleep(0.25)
-            
         self.pruss.uart.io.write( b'FFV\r', discard=True, flush=True )  # interrupt continuous transmission
         sleep( 0.1 )  # make sure that response has been received
         self.pruss.uart.io.discard()  # discard response
@@ -299,12 +294,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.core_1.halt()
         self.ui.lcd_weight.display(self.pruvars.force)
         angle = self._ConvertToAngle(self.pruvars.position) 
-        self.maxloadposition = max_position
-        self.minloadposition = abs(max_position - 180)
-        self.GoBottomButton_on_click()
+        #self._MotorGoToAngle(angle)    
+        #self.maxloadposition = angle
+        #self.minloadposition = float((angle + 180) % 360)
+        self.ui.lcd_position.display(angle)
+        #self.GoBottomButton_on_click()
         self.zero_offset = self.position.value
-        #self.ui.lcd_position.display(angle)
-    
+
     @pyqtSlot()
     def GoTopButton_on_click(self):
         target_angle = self.maxloadposition

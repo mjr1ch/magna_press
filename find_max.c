@@ -76,10 +76,8 @@ int32_t receive_measurement()
 
 void main()
 {
-        uint32_t currentPosition;
-        uint32_t maxForcePosition = 0;
+        uint32_t position =0;;
         int32_t force = 0; 
-        int32_t maxForce = 0;
         
 	CT_UART.THR = 'S'; 
         CT_UART.THR = 'N'; 
@@ -91,16 +89,11 @@ void main()
 		
 		// read position value from decoder 
 
- 		currentPosition = *position_var;
-        
-		if (force > maxForce){
-                	maxForcePosition = currentPosition;
-                	maxForce = force;
-    	 	}
+ 		position = *position_var;
         
 		// update sharedVars for GUI access
-                shared_pru1_vars.position = maxForcePosition;
-                shared_pru1_vars.force = maxForce;
+                shared_pru1_vars.position = position;
+                shared_pru1_vars.force = force;
 	}
 }
 
