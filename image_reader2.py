@@ -1,0 +1,428 @@
+from pypylon import pylon
+import cv2
+import numpy as np
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QImage, QPixmap
+import asyncio 
+from time import sleep 
+import csv
+
+class Visualize_Sample():
+
+    camera = None    
+    calibration = True
+    top_left_corner = (0,0)
+    width_and_height = (100,100)
+    threshold_low = 0
+    threshold_high = 255
+    final_dark_tol = 1
+    final_index_pad = 1
+    final_bottom_trim = 2
+    capture_profile = False
+    image_stream = None
+    data_file = None
+    writer = None
+    orig_height = 1 
+    orig_width_padding = None 
+    orig_height_padding = None 
+    orig_sample = None 
+    orig_top = None 
+    orig_bottom = None 
+    orig_left = None 
+    orig_right = None 
+    offset = None 
+    sensitivity = None 
+    sample_size = None
+    sample = 0
+
+    image_counter = 0 
+
+
+
+    def __init__(self):
+        #super(Visualize_Sample,self).__init__(parent.ui)
+        self.init_camera()
+
+
+    async def find_nearest_point(self,center,points):
+        distance = np.linalg.norm(points - center,axis=1)
+        index = np.argmin(distance,axis = 0)[0]
+        value = points[index][:][0]
+        points = np.delete(points,index,axis = 0)
+        return points ,value
+
+    async def classify_points_contact(self,calibration,points):
+        print('classifiying points')
+        print('Step 1')
+        if (calibration):
+            factor_1 = float(int(self.parent.ui.sld_SENSITIVITY.value())/100000)
+        else:
+            factor_1 = self.sensitivity
+        print('Step 2')
+        epsilon = factor_1*cv2.arcLength(points,True)
+        approx = cv2.approxPolyDP(points,epsilon,True)
+        shape = approx
+        max_top = np.min(approx,axis =0)[0,1] 
+        max_bottom = np.max(approx,axis=0)[0,1]
+        print('Step 3')
+        if (np.min(approx,axis=0)[0,0] > 1000):
+            max_side = np.min(approx,axis=0)[0,0]
+        else:
+            max_side = np.max(approx,axis=0)[0,0]
+        print('Step 4')
+        return max_top, max_side, max_bottom, shape
+
+    async def classify_points_noncontact(self,calibration,points):
+        print('Step A ')
+        if (calibration):
+            factor_1 = float(int(self.parent.ui.sld_SENSITIVITY.value())/10000)
+            factor_2 = float(int(self.parent.ui.sld_SAMPLE_FACTOR.value())/100)
+        else:
+            factor_1 = float(self.sensitivity/10000)
+            factor_2 = float(self.sample_size/100)
+        print('Step B ')
+        epsilon = factor_1*cv2.arcLength(points,True)
+        approx = cv2.approxPolyDP(points,epsilon,True)
+        print('Step C ')
+        max_top = np.min(approx,axis =0)[0,1] 
+        max_bottom = np.max(approx,axis=0)[0,1]
+        # calculate x,y coordinate of center
+        M = cv2.moments(approx) 
+        if M["m00"] != 0:
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+        else:
+            cX, cY = 0, 0
+        print('Step D ')
+        image_center = (cX,cY) 
+        total = 0 
+        search_end = max(1,int(factor_2*int(len(approx))))
+        approx2 = approx
+        shape = approx
+        print('Step E')
+        for i in range(0,search_end):
+            approx, value = await self.find_nearest_point(image_center ,approx)
+            total += value[1]
+        print('Step E1')
+        max_sample = total/search_end
+        print('Step E2')
+        approx2 = np.squeeze(approx2)
+        print('Step E3')
+        idx = np.unique( np.argwhere(abs(approx2[:,0]- 0) < 100)[:,0])
+        approx2 = np.delete(approx2,idx,axis = 0)
+        print('Step E4')
+        idx = np.unique(np.argwhere(abs(approx2[:,0]- 4024) < 100)[:,0])
+        approx2 = np.delete(approx2,idx,axis = 0)
+        print('Step E5')
+        if (len(approx) == 0):
+            side_1 = 0 
+            side_2 = 4023
+        else:
+            side_1 = np.min(approx2,axis =0)[0] 
+            side_2 = np.max(approx2,axis =0)[0] 
+        print('Step E6')
+        return max_top, side_1, side_2, max_sample, max_bottom, shape, image_center
+
+    async def get_profile(self):
+        self.capture_profile = True
+        print(f' in get profile and capture profile is set to {self.capture_profile}')
+        await asyncio.sleep(1)
+        self.image_stream.cancel()
+        self.camera.StopGrabbing()
+
+    def label_image(self,image,label,position,color):
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        # fontScale
+        fontScale = 1
+        # Blue color in BGR
+        color = (255, 255, 0)
+        # Line thickness of 2 px
+        thickness = 7
+        labelled_image = cv2.putText(image,label, position, font,fontScale, color, thickness, cv2.LINE_AA)
+        return labelled_image 
+
+    async def stop_run(self):
+        self.camera.StopGrabbing()
+        self.image_stream.cancel()
+
+    def Update_GUI_Labels(self,top_platen,sample_top,bottom_platen):
+        self.parent.ui.lb_PLATEN_to_PLATEN.setText(str(bottom_platen-top_platen))
+        self.parent.ui.lb_PLATEN_to_SAMPLE.setText(str(sample_top-top_platen))
+        self.parent.ui.lb_SAMPLE_to_BOTTOM_PLATEN.setText(str(int(bottom_platen)-int(sample_top)))
+        self.parent.ui.lb_SAMPLE_TOP_to_ORIGINAL_SAMPLE_TOP.setText(str(int(sample_top)-int(self.orig_sample)))
+        self.parent.ui.lb_ORIGINALSAMPLE_to_BOTTOM_PLATEN.setText(str(int(self.orig_bottom)-int(self.orig_sample)))
+
+    def Emit_Strain(self, val):
+        self.parent.current_strain = val
+
+    def init_camera(self):
+        serial_number = '23437639'
+        info = None 
+
+    async def threshold_image(self,calibration,img):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret3,thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        return thresh
+
+    async def interpret_image(self,calibration,img):
+        contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        screened_list = [] 
+        for ctr in contours:
+            if cv2.contourArea(ctr) > 10000:  
+                screened_list.append(ctr)
+        if (len(screened_list) == 1):
+            print('no contact')
+            points = np.array(screened_list[0],dtype = int)
+            points = np.squeeze(points)
+            top,side_1,side_2,sample,bottom, polygons_1, center = await self.classify_points_noncontact(calibration,points)
+            print('no contact 1')
+            top_platen = np.array([(side_1,top), (side_2,top)],dtype=int)
+            print('no contact 2')
+            bottom_platen = np.array([(side_1,bottom),(side_2,bottom)], dtype = int)
+            print('no contact 3')
+            sample = np.array([(side_1,sample),(side_2,sample)], dtype = int)
+            print('no contact 4')
+            polygons = [polygons_1]
+        elif (len(screened_list) == 2):
+            print('contact')
+            print('Step 1 ')
+            points_1 = np.array(screened_list[0],dtype = int)
+            print('Step 2 ')
+            points_1 = np.squeeze(points_1)
+            print('Step 3 ')
+            points_2 = np.array(screened_list[1],dtype = int)
+            print('Step 4 ')
+            points_2 = np.squeeze(points_2)
+            print('Step 5 ')
+            top_1, side_1, bottom_1, polygons_1 = await self.classify_points_contact(calibration,points_1)
+            top_2, side_2, bottom_2, polygons_2 = await self.classify_points_contact(calibration,points_2)
+            print('Step 6 ')
+            polygons = [polygons_1, polygons_2]
+            top = (top_1 + top_2)/2
+            bottom = (bottom_1 + bottom_2)/2
+            if (side_1 < side_2):
+                side_l = side_1
+                side_r = side_2
+            else:
+                side_r = side_1
+                side_l = side_2
+            top_platen = np.array([(side_l,top), (side_r,top)],dtype=int)
+            bottom_platen = np.array([(side_l,bottom),(side_r,bottom)], dtype = int)
+            sample = np.array([(0,3036),(4024,3036)], dtype = int) 
+            center = (0,0)
+        else: 
+            print('process failed!!!')
+            top_platen = np.array([(0,0), (0,0)],dtype=int)
+            bottom_platen = np.array([(0,0),(0,0)], dtype = int)
+            sample = np.array([(0,3036),(0,0)], dtype = int) 
+            polygons = None 
+            center = (0,0)
+        return top_platen, sample, bottom_platen,polygons, center 
+
+    async def annotate_threshold(self,img,shapes,center):
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+        if shapes is None:
+            return img 
+        for shape in shapes:
+            #cv2.drawContours(img, [shape], -1, (255, 0, 255), 25)
+            cv2.polylines(img, [shape], True, (255,0,0), thickness=25)
+            for j in range(0,len(shape)):  
+                spot = shape[j][0]
+                x_y = (spot[0],spot[1])
+                cv2.circle(img, tuple(x_y), radius=50, color=(255, 255, 0), thickness=-1)
+        if center != (0,0):
+            cv2.circle(img, center, radius=5, color=(255, 0, 0), thickness=100)
+        return img
+
+    async def annotate_image(self,calibration,img,lines):
+        if (calibration):
+            raw_img = None 
+        else:
+            raw_img = img.copy()
+        if (len(lines) == 2):
+            top = lines[0][0][1]
+            bottom = lines[1][0][1]
+            new_height = bottom - top
+            sample = 0
+        else:
+            top = lines[0][0][1]
+            sample = lines[1][0][1]
+            bottom = lines[2][0][1]
+            new_height = bottom - sample
+        left = lines[0][0][0]
+        right = lines[0][1][0]
+        for i in range(0,len(lines)): 
+            point_1 = tuple(lines[i][0])
+            point_2 = tuple(lines[i][1])
+            img = cv2.line(img, point_1, point_2, (0, 0, 255), 10)
+        if (calibration):
+            height_padding = int(self.parent.ui.sld_HEIGHT_PADDING.value())
+            width_padding = int(self.parent.ui.sld_WIDTH_PADDING.value())
+            img = img[top-height_padding:bottom+height_padding,left-width_padding:right+width_padding]
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        print(self.capture_profile)
+        if (self.capture_profile):
+            self.orig_top = top
+            self.orig_sample = sample
+            self.orig_bottom = bottom
+            self.orig_height = bottom - sample
+            self.orig_left = left
+            self.orig_right = right 
+            self.width_padding = width_padding
+            self.height_padding = height_padding
+            self.sensitivity = float(int(self.parent.ui.sld_SENSITIVITY.value())/100000)
+            self.sample_size = int(self.parent.ui.sld_SAMPLE_FACTOR.value())
+            self.capture_profile = False
+        return img, new_height, raw_img
+
+    async def overlay_original_data(self,img, img_raw ):
+        color = ( 0,255,255)
+        point_1 = (self.orig_left,self.orig_top)
+        point_2 = (self.orig_right,self.orig_top)
+        img = cv2.line(img, point_1, point_2, color, 30)
+        point_1 = (self.orig_left,self.orig_bottom)
+        point_2 = (self.orig_right,self.orig_bottom)
+        img = cv2.line(img, point_1, point_2, color, 30)
+        point_1 = (self.orig_left,self.orig_sample)
+        point_2 = (self.orig_right,self.orig_sample)
+        img = cv2.line(img, point_1, point_2, color, 30)
+        img = img[self.orig_top-self.height_padding:self.orig_bottom+self.height_padding,\
+                self.orig_left-self.width_padding:self.orig_right+self.width_padding]
+        img_raw = img_raw[self.orig_top-self.height_padding:self.orig_bottom+self.height_padding,\
+                self.orig_left-self.width_padding:self.orig_right+self.width_padding]
+        return img, img_raw
+            
+    async def calibrate_aquisition(self,img):
+        print('calibrate aquisition')
+        print(f'capture profile is set to {self.capture_profile}')
+        thresh_img = await self.threshold_image(True,img)
+        print(float(int(self.parent.ui.sld_SENSITIVITY.value())/100000))
+        top, sample, bottom, shapes, center = await self.interpret_image(True,thresh_img)
+        thresh_img = await self.annotate_threshold(thresh_img,shapes,center)
+        if (sample[0][1] == 3036):
+            lines = [top,bottom]
+        else: 
+            lines = [top,sample,bottom]
+        if (top[0][1] == 0):
+            final_img = img
+        else:
+            final_img, new_height, scrap = await self.annotate_image(True,img,lines)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return img, thresh_img, final_img
+
+    async def process_image(self,img):
+        print('proces images')
+        print('Step 1')
+        thresh_img = await self.threshold_image(False,img)
+        print('Step 2')
+        top, sample, bottom, shapes, center = await self.interpret_image(False,thresh_img)
+        print('Step 3')
+        if (sample[0][1] == 3036):
+            lines = [top,bottom]
+        else: 
+            lines = [top,sample,bottom]
+        print('Step 4')
+        final_img,new_height, img_raw = await self.annotate_image(False,img,lines)
+        print('Step 5')
+        final_img, img_raw = await self.overlay_original_data(img, img_raw )
+        print('Step 6')
+        strain = float(100 - new_height/self.orig_height*100)
+        print('Step 7')
+        self.Update_GUI_Labels(top[0,1],sample[0,1],bottom[0,1])
+        self.image_counter += 1
+        filename = f'./images/image-{self.image_counter}.tiff'
+        time,timestamp,force,position = self.parent.Emit_Data()
+        print('Step 8 ')
+        data = [str(timestamp),str(time),str(force),str(position), \
+                str(strain),str(top[0,1]),str(sample[0,1]),   \
+                str(bottom[0,1]),str(self.orig_top),    \
+                str(self.orig_sample),str(self.orig_bottom)]
+        self.writer.writerow(data)
+        cv2.imwrite(filename,img_raw)
+        final_img= cv2.cvtColor(final_img, cv2.COLOR_BGR2RGB)
+        return final_img
+
+    def Emit_Strain(self, val):
+        self.parent.current_strain = val
+
+    def init_camera(self):
+        serial_number = '23437639'
+        info = None 
+        for i in pylon.TlFactory.GetInstance().EnumerateDevices():
+            if i.GetSerialNumber() == serial_number:
+                info = i 
+                break  
+        else:
+            print('Camera with {} serial number not found '.format(serial_number))
+        if info is not None:
+            self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateDevice(info))
+            self.camera.Open()
+        self.converter = pylon.ImageFormatConverter()
+        # converting to opencv bgr format
+        self.converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+        self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+
+    async def grabbing_image(self):
+        while self.camera.IsGrabbing():
+            grabResult = self.camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+            if grabResult.GrabSucceeded():             
+                img = self.converter.Convert(grabResult)
+                img = img.GetArray()
+                h, w, ch  = img.shape
+                if (self.calibration):
+                    original_img, threshold_img, final_img = await self.calibrate_aquisition(img)
+                    bytesPerLine = ch*w
+                    original_QT = QImage(original_img.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                    threshold_QT = QImage(threshold_img.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    cropped_bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data , cropped_w, cropped_h,cropped_bytesPerLine, QImage.Format_RGB888)
+                    if not (original_QT.isNull()):
+                        p0 = original_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.original_image.setPixmap(QPixmap.fromImage(p0))
+                    if not (threshold_QT.isNull()):
+                        p1 = threshold_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.threshold_image.setPixmap(QPixmap.fromImage(p1))
+                    if not (final_QT.isNull()):
+                        p2 = final_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.final_image.setPixmap(QPixmap.fromImage(p2))
+                else:
+                    final_img = await self.process_image(img)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (final_QT.isNull()):
+                        p0 = final_QT.scaled(480, 480, Qt.KeepAspectRatio)  
+                        self.parent.ui.camera_image.setPixmap(QPixmap.fromImage(p0))
+            await asyncio.sleep(0)
+
+    async def aquire_images(self,calibration,calling_window):
+        self.parent = calling_window
+        # Grabing Continusely (video) with minimal delay
+        self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+        if (calibration):
+            self.calibration = True 
+        else:
+            self.calibration = False
+            self.data_file = open('run_data.csv', 'w',newline='')
+            self.writer = csv.writer(self.data_file)
+            header = ['timestamp','time_s', 'force_g','position', 'strain','top_platen','sample_top','bottom_platen','orig_top_platen','orig_sample_top','orig_bottom_platen']
+            self.writer.writerow(header)
+
+        print('trying out emit data')
+        self.image_stream = asyncio.create_task(self.grabbing_image()) 
+
+    def remove_bottom_node(self,contour):
+        if (contour != []):
+            index = np.argmax(contour,axis = 0)[1]
+            rows = contour.shape[0]
+            
+            return np.reshape(np.delete(contour,[index*2,index*2+1]),(rows-1,2))
+        else:
+            return contour  
+
+    def get_vertical_distance(self,contour):
+        high_val = contour[np.argmax(contour,axis=0)[1],1]
+        low_val = contour[np.argmin(contour,axis=0)[1],1]
+        return high_val - low_val

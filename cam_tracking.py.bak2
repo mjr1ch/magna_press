@@ -1,0 +1,333 @@
+from pypylon import pylon
+import cv2
+import sys
+import numpy as np
+from scipy.interpolate import interp2d
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QImage, QPixmap
+from freespin import Ui_FreeSpin
+from PyQt5.QtWidgets import QApplication
+import asyncio 
+import inspect
+from PyQt5.QtCore import QRect
+from time import sleep 
+import math
+
+
+class Visualize_Sample():
+    
+    camera = None    
+    calibration = True
+    top_left_corner = (0,0)
+    width_and_height = (100,100)
+    finalthreshold_low = 0
+    finalthreshold_high = 255
+    final_top_left_trim = 1
+    final_top_right_trim = 1
+    final_bottom_trim = 2
+    capture_profile = False
+    base_profile = None
+    image_stream = None
+    kalman = None
+
+
+    def __init__(self):
+        #super(Visualize_Sample,self).__init__(parent)
+        self.init_camera()
+        self.kalman = cv2.KalmanFilter(4,2)
+        self.kalman.measurementMatrix = np.array([[1,0,0,0],[0,1,0,0]],np.float32)
+        self.kalman.transitionMatrix = np.array([[1,0,1,0],[0,1,0,1],[0,0,1,0],[0,0,0,1]],np.float32)
+        self.kalman.processNoiseCov = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],np.float32) * 0.03
+        self.kalman.measurementNoiseCov = np.array([[1,0],[0,1]],np.float32) * 0.00003
+
+    async def get_profile(self):
+       
+        self.capture_profile = True
+        await asyncio.sleep(0.0001)
+        self.image_stream.cancel()
+        self.camera.StopGrabbing()
+
+    def calibrate_aquisition(self,img):
+        
+        im = 255-img # invert
+        im = im.astype(np.float32)
+        imh, imw = im.shape[:2]
+        im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        p0 = np.zeros((imh,imw,3), np.uint8)    
+        p1 = np.zeros((imh,imw,3), np.uint8)    
+        p2 = np.zeros((imh,imw,3), np.uint8)    
+        p3 = np.zeros((imh,imw,3), np.uint8)    
+        # assinging orignal images to slots 
+        p0 = img
+        # drawing sample centerline on image 
+        sample_centerline = int(self.parent.sld_SAMPLE_CENTERLINE.value())
+        startpoint = (sample_centerline,0)
+        endpoint = (sample_centerline,imh)
+        color = (255,255,0)
+        line_thickness = 15
+        p0 = cv2.line(p0, startpoint, endpoint, color, line_thickness)
+        ################################################################3    
+        #               Extracting features from image     
+        ##################################################################    
+        kernel_size = 3    
+        im_blur = cv2.GaussianBlur(im_gray,(kernel_size, kernel_size),0).astype('uint8')    
+        high_threshold_limit = int(self.parent.sld_THRESHOLD_HL.value())    
+        low_threshold_limit = int(self.parent.sld_THRESHOLD_LL.value())
+        th, img_th = cv2.threshold(im_blur,low_threshold_limit,high_threshold_limit,cv2.THRESH_BINARY)#+cv2.THRESH_OTSU)    
+        if (self.capture_profile):
+            self.finalthreshold_high = high_threshold_limit
+            self.finalthreshold_low = low_threshold_limit
+        p1 = np.zeros((imh,imw,3), np.uint8)    
+        p1 = img_th    
+        poly_count = 0
+        found_poly = None
+        contours, hierarchy =  cv2.findContours(img_th,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)    
+        screened_contours = []    
+        valid_area_low_limit = float(self.parent.sld_POLYGON_LOWLIMIT.value()) 
+        valid_area_high_limit = 100E6
+        max_area = 0
+        color = np.random.randint(0, 255, size=(3, ))
+        color = ( int (color [ 0 ]), int (color [ 1 ]), int (color [ 2 ]))
+        for i in range(0,len(contours)):
+            cnt = contours[i]
+            area = cv2.contourArea(cnt) 
+            if valid_area_low_limit <= area and area <= valid_area_high_limit:
+            # convert countours to polygons 
+                poly_count += 1
+                if (cv2.contourArea(cnt) > max_area):
+                    max_area = area 
+                    peri = cv2.arcLength(cnt,True)
+                    found_poly = cv2.approxPolyDP(cnt,float(int(self.parent.sld_POLYGON_RESOLUTION.value())/100*0.005)*peri,True)      
+                    cv2.fillPoly(p2,[found_poly],tuple(color))
+                    for j in range(0,len(found_poly)):
+                        spot = found_poly[j]
+                        x_y = (spot[0][0],spot[0][1])
+                        cv2.circle(p2, tuple(x_y), radius=20, color=(0, 0, 255), thickness=-1)
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        # org
+        org = (300, 750)
+        # fontScale
+        fontScale = 7
+        # Blue color in BGR
+        color = (255, 0, 0)
+        # Line thickness of 2 px
+        thickness = 40
+        image_label = str(poly_count) + ' Polygons Detected' 
+        p2 = cv2.putText(p2,image_label, org, font,fontScale, color, thickness, cv2.LINE_AA)
+        #######################################################################
+        # creating focused image on sample 
+        #######################################################################
+        if (found_poly.all() != None):
+            ### Calculating crop
+            found_poly = np.squeeze(found_poly,1)
+            close_points = []
+            if (found_poly.all() != None):
+                for j in range (0,4):
+                    found_poly,close_point = self.find_nearest_index(sample_centerline,found_poly)
+                    close_points.append(close_point)
+                close_points = np.asarray(close_points)
+                top_left_x = int(close_points[np.argmin(close_points[:,0]),0])
+                top_left_y = int(close_points[np.argmin(close_points[:,1]),1])
+                bottom_right_x = int(close_points[np.argmax(close_points[:,0]),0])
+                bottom_right_y = int(close_points[np.argmax(close_points[:,1]),1])
+                padding_x = 200
+                padding_y= 75
+                width = int((bottom_right_x - top_left_x) + 2*padding_x)
+                height = int((bottom_right_y - top_left_y)+ 2*padding_y)
+                top_left_x = int(top_left_x-padding_x)
+                top_left_y = int(top_left_y-padding_y)
+                if (self.capture_profile):
+                    self.top_left_corner = (top_left_x,top_left_y)
+                    self.width_and_height = (width,height)
+                if (width <1):
+                    width = 10
+                if (height < 1):
+                    height = 10
+                if (top_left_x <1):
+                    top_left_x = 100
+                if (top_left_y<1):
+                    top_left_y = 100
+                img_th_cropped = img_th[top_left_y:top_left_y+height, top_left_x:top_left_x+width].copy() 
+                p3 = p3[top_left_y:top_left_y+height, top_left_x:top_left_x+width].copy() 
+                p3 = cv2.fastNlMeansDenoising(p3, h=50, templateWindowSize=7, searchWindowSize=13)
+                contours_cropped, hierarchy =  cv2.findContours(img_th_cropped,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+                valid_area_low_limit_cropped = 1000
+                valid_area_high_limit_cropped = 100E6 
+                for i in range(0,len(contours_cropped)):
+                    cnt = contours_cropped[i]
+                    cnt = np.squeeze(cnt,1)
+                    if valid_area_low_limit_cropped <= cv2.contourArea(cnt) and  cv2.contourArea(cnt) <= valid_area_high_limit_cropped:
+                        cnt = cnt[int(self.parent.sld_TLTRIM.value()):len(cnt)-int(self.parent.sld_TRTRIM.value())]
+                        for i in range(0,int(self.parent.sld_BTRIM.value())):
+                            cnt = self.remove_bottom_node(cnt)        
+                        cv2.drawContours(p3, [cnt], 0, tuple(color), -1)
+                        cv2.polylines(p3,[cnt],True,(255,255,255),3)
+                        for j in range(0,len(cnt)):
+                            spot = cnt[j]
+                            x_y = (spot[0],spot[1])
+                            cv2.circle(p3, tuple(x_y), radius=3, color=(0,0, 255), thickness=-1)
+                if (self.capture_profile):
+                    self.final_top_left_trim = self.parent.sld_TLTRIM.value()
+                    self.final_top_right_trim = self.parent.sld_TRTRIM.value()
+                    self.final_bottom_trim = self.parent.sld_BTRIM.value() 
+                    self.base_profile = cnt
+                    self.capture_profile = False
+                    
+        target_width = 480 
+        scale_percent = float(target_width/imw)
+        target_height = int(img.shape[0]*scale_percent) 
+        dim = (target_width, target_height)
+        p3 = cv2.resize(p3, dim, interpolation = cv2.INTER_LINEAR) 
+        p0 = cv2.cvtColor(p0, cv2.COLOR_BGR2RGB)
+        p2 = cv2.cvtColor(p2, cv2.COLOR_BGR2RGB)
+        p3 = cv2.cvtColor(p3, cv2.COLOR_BGR2RGB)
+        return p0, p1, p2, p3
+
+    def process_image(self,img):
+        im = 255-img # invert
+        im = im.astype(np.float32)
+        imh, imw = im.shape[:2]
+        im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        valid_area_high_limit_cropped = 100E6 
+        width = self.width_and_height[0]
+        height = self.width_and_height[1]
+        im_gray = im_gray[self.top_left_corner[1]:self.top_left_corner[1]+height, self.top_left_corner[0]:self.top_left_corner[0]+width].copy() 
+        p0 = img 
+        p0 = p0[self.top_left_corner[1]:self.top_left_corner[1]+height, self.top_left_corner[0]:self.top_left_corner[0]+width].copy() 
+        p0 = cv2.fastNlMeansDenoising(p0, h=50, templateWindowSize=7, searchWindowSize=13)
+        kernel_size = 3    
+        im_blur = cv2.GaussianBlur(im_gray,(kernel_size, kernel_size),0).astype('uint8')    
+        high_threshold_limit = self.finalthreshold_high
+        low_threshold_limit = self.finalthreshold_low 
+        th, img_th = cv2.threshold(im_blur,low_threshold_limit,high_threshold_limit,cv2.THRESH_BINARY)
+        contours, hierarchy =  cv2.findContours(img_th,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        valid_area_low_limit_cropped = 1000
+        valid_area_high_limit_cropped = 100E6 
+        if (contours != []):
+            for i in range(0,len(contours)):
+                cnt = contours[i]
+                cnt = np.squeeze(cnt,1)
+                if valid_area_low_limit_cropped <= cv2.contourArea(cnt) and  cv2.contourArea(cnt) <= valid_area_high_limit_cropped:
+                    cnt = cnt[int(self.final_top_left_trim):len(cnt)-int(self.final_top_right_trim)]
+                    for i in range(0, int(self.final_bottom_trim)):
+                        cnt = self.remove_bottom_node(cnt)        
+                    p0 = cv2.polylines(p0,[cnt],True,color = (255,255,0),thickness = 3)
+                    for j in range(0,len(cnt)):
+                        spot = cnt[j]
+                        x_y = (spot[0],spot[1])
+                        cv2.circle(p0, tuple(x_y), radius=3, color=(0, 0, 255), thickness=-1)
+            if (self.base_profile != []) and (self.base_profile is not None):
+                strain = float (100 -self.get_vertical_distance(cnt) / self.get_vertical_distance(self.base_profile)*100)
+                # font
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                # org
+                org = (50, 300)
+                # fontScale
+                fontScale = 1
+                # Blue color in BGR
+                color = (255, 255, 0)
+                # Line thickness of 2 px
+                thickness = 5
+                image_label = str(strain) + '% Strain'
+                p0 = cv2.putText(p0,image_label, org, font,fontScale, color, thickness, cv2.LINE_AA)
+                p0 = cv2.polylines(p0,[self.base_profile],True,color = (255,255,255),thickness = 2)
+        target_width = 480 
+        scale_percent = float(target_width/imw)
+        target_height = int(img.shape[0]*scale_percent) 
+        dim = (target_width, target_height)
+        p0 = cv2.resize(p0, dim, interpolation = cv2.INTER_LINEAR) 
+        p0 = cv2.cvtColor(p0, cv2.COLOR_BGR2RGB)
+        return p0
+
+    def init_camera(self):
+        serial_number = '23437639'
+        info = None 
+        for i in pylon.TlFactory.GetInstance().EnumerateDevices():
+            if i.GetSerialNumber() == serial_number:
+                info = i 
+                break  
+        else:
+            print('Camera with {} serial number not found '.format(serial_number))
+        if info is not None:
+            self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateDevice(info))
+            self.camera.Open()
+        
+        self.converter = pylon.ImageFormatConverter()
+        # converting to opencv bgr format
+        self.converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+        self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+
+    async def grabbing_image(self):
+        while self.camera.IsGrabbing():
+            grabResult = self.camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+            if grabResult.GrabSucceeded():             
+                img = self.converter.Convert(grabResult)
+                img = img.GetArray()
+                h, w, ch  = img.shape
+                if (self.calibration):
+                    original_img, threshold_img, contour_img, contour_cropped_img = self.calibrate_aquisition(img)
+                    bytesPerLine = w
+                    threshold_QT = QImage(threshold_img.data, w, h, bytesPerLine,QImage.Format_Grayscale8)
+                    bytesPerLine = ch*w
+                    original_QT = QImage(img.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                    contour_QT = QImage(contour_img.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                    cropped_h,cropped_w, ch = contour_cropped_img.shape
+                    bytesPerLine = cropped_w*ch
+                    contour_cropped_QT = QImage(contour_cropped_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (original_QT.isNull()):
+                        p0 = original_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.original_image.setPixmap(QPixmap.fromImage(p0))
+                    if not (threshold_QT.isNull()):
+                        p1 = threshold_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.threshold_image.setPixmap(QPixmap.fromImage(p1))
+                    if not (contour_QT.isNull()):
+                        p2 = contour_QT.scaled(480, 480, Qt.KeepAspectRatio)
+                        self.parent.vision_image.setPixmap(QPixmap.fromImage(p2))
+                    if not (contour_cropped_QT.isNull()):
+                        p3 = contour_cropped_QT#.scaled(480, 480, Qt.KeepAspectRatio)
+                        self.parent.final_image.setPixmap(QPixmap.fromImage(p3))
+                else:
+                    final_img = self.process_image(img)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (final_QT.isNull()):
+                        p0 = final_QT#.scaled(480, 480, Qt.KeepAspectRatio)  
+                        self.parent.camera_image.setPixmap(QPixmap.fromImage(p0))
+            await asyncio.sleep(0.001)
+
+    async def aquire_images(self,calibration,calling_window):
+        
+        self.parent = calling_window
+        # Grabing Continusely (video) with minimal delay
+        self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+        if (calibration):
+            self.calibration = True 
+        else:
+            self.calibration = False 
+        
+        self.image_stream = asyncio.create_task(self.grabbing_image()) 
+
+    def find_nearest_index(self,center,points):
+        distance = np.array(list(map(abs,(points[:,0] - center))))
+        index = np.argmin(distance,axis = 0)
+        rows = points.shape[0]
+        value = points[index][:]
+        return np.reshape(np.delete(points,[index*2,index*2+1]),(rows-1,2)),value
+
+    def remove_bottom_node(self,contour):
+        if (contour != []):
+            index = np.argmax(contour,axis = 0)[1]
+            rows = contour.shape[0]
+            
+            return np.reshape(np.delete(contour,[index*2,index*2+1]),(rows-1,2))
+        else:
+            return contour  
+
+    def get_vertical_distance(self,contour):
+        high_val = contour[np.argmax(contour,axis=0)[1],1]
+        low_val = contour[np.argmin(contour,axis=0)[1],1]
+        return high_val - low_val
+
+

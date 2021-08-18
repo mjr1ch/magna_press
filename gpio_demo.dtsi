@@ -1,0 +1,112 @@
+#include "bone/black.h"
+#include "gpio.h"
+
+// Since we're creating a virtual device, there's not really a better place to
+// put it than root of the device tree.
+/ {
+	// Node name "gpios" is arbitrary but should not conflict with other
+	// nodes or properties in the root of the device tree.
+	// To list all of these on a running system:  ls /proc/device-tree/
+	gpios {
+		// configure the driver for this device node, which must be "gpio-of-helper"
+		compatible = "gpio-of-helper";
+
+		// Attach pinmux node to this device node.  In rare cases devices may have
+		// multiple pinmux states, but usually you only have a "default" state.
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_pins>;  //<--- references the "gpio_pins:" label below
+
+		// For each gpio to be setup {
+
+		// The node name "gpio-label" becomes the gpio label and may be arbitrary but
+		// must be unique for each gpio (globally, not merely those exported by this
+		// gpio-of-helper device).
+		gpio-label {
+			gpio = <
+				&gpio2		// gpio controller (&gpio0, &gpio1, &gpio2, or &gpio3)
+				2		// gpio of that controller (0-31)
+				ACTIVE_LOW	// either ACTIVE_HIGH (normal) or ACTIVE_LOW (inverted)
+			>;
+			output;			// initial direction: input or output (optional for outputs)
+			init-high;		// if output, whether it's initially low or initially high
+
+			// Specifying either "init-low;" or "init-high;" is forbidden for inputs and
+			// required for outputs, hence its presence automatically implies the gpio is
+			// configured as output hence explicitly specifying "output;" is optional.
+			//
+			// init-low/high is not affected by whether the gpio is ACTIVE_HIGH or ACTIVE_LOW.
+
+			// If you want userspace to be able to change the direction of the gpio from
+			// input to output or vice versa, uncomment the following:
+			//dir-changeable;
+		};
+		MS1-P8_10 {
+			gpio = <
+				&gpio2		
+				4	
+				ACTIVE_LOW	inverted)
+			>;
+			output;			// initial direction: input or output (optional for outputs)
+			init-low;		// if output, whether it's initially low or initially high
+		};
+		MS2-P8_11 {
+			gpio = <
+				&gpio1		
+				13
+				ACTIVE_LOW	inverted)
+			>;
+			output;			// initial direction: input or output (optional for outputs)
+			init-low;		// if output, whether it's initially low or initially high
+		};
+		enable-P8_12 {
+			gpio = <
+				&gpio1		
+				12
+				ACTIVE_LOW	inverted)
+			>;
+			output;			// initial direction: input or output (optional for outputs)
+			init-low;		// if output, whether it's initially low or initially high
+		};
+		direction-P8_13 {
+			gpio = <
+				&gpio0		
+				23
+				ACTIVE_LOW	inverted)
+			>;
+			output;			// initial direction: input or output (optional for outputs)
+			init-low;		// if output, whether it's initially low or initially high
+		};
+		step-P8_14 {
+			gpio = <
+				&gpio0		
+				26
+				ACTIVE_LOW	inverted)
+			>;
+			output;			// initial direction: input or output (optional for outputs)
+			init-low;		// if output, whether it's initially low or initially high
+		};
+	};
+};
+
+// Pinmux nodes must be created inside the pinmux controller, which is &am33xx_pinmux
+&am33xx_pinmux {
+	// Label "gpio_pins" is arbitrary but must be _globally_ unique among all labels
+	// in the device tree (base + overlays), hence it's a good idea to make a bit more
+	// verbose than the node name needs to be.  Also, unlike the node name, the label
+	// needs to be a valid C identifier (so only alphanumeric and underscores).
+	//
+	// Node name "gpios" only needs to be unique inside &am33xx_pinmux, so usually
+	// it's fine to just use the same name as the device it's for.
+	//
+	gpio_pins: stepper-gpios {
+		pinctrl-single,pins = <
+			// For each pin corresponding to a gpio that is setup {
+			PIN_PULLDOWN( P8_10, 7 ) 
+			PIN_PULLDOWN( P8_11, 7 ) 
+			PIN_PULLDOWN( P8_12, 7 ) 
+			PIN_PULLDOWN( P8_13, 7 ) 
+			PIN_PULLDOWN( P8_14, 7 ) 
+			// }
+		>;
+	};
+};

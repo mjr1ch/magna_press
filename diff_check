@@ -1,0 +1,354 @@
+6d5
+< from ctypes import sizeof as c_sizeof
+9a9
+> 
+12,13c12
+<             ("id",uint32),
+<             ("timestamp", uint32),   # time in cycles
+---
+>             ("time", uint32),   # time in cycles
+15c14,17
+<             ("force", int32),  # in grams
+---
+>             ("force", int32),  # in grams i
+>             ("duty_cycle", uint8), # duty cycle 0%-100%
+>             ("wave_shape",uint8), # wave shape input  
+> 
+30a33
+> 
+44a48,55
+> class PruVars( Structure ):
+>     _fields_ = [
+>             ("position", uint32), # in encoder pulsest 1140 per Revo 
+>             ("force", int32),  # in grams i
+>             ("duty_cycle", uint8), # duty cycle 0%-100%
+>             ("wave_shape",uint8), # wave shape input  
+>         ]
+> 
+73,82d83
+<     NUM_MSGS = None
+<     ddr_layout = None
+<     shmem = None 
+<     msgbuf = None 
+<     ddr_widx = None 
+<     ddr_layout = None 
+<     rdix = 0 
+<     wdix = 0
+<     lastid = 0 
+<     timestamp_cycles = 0 
+91a93
+>         self.core_1.load('stream.out')
+92a95
+>         self.pruvars = self.pruss.dram2.map( PruVars )
+99,100c102
+<         self.stepper_direction = Gpio('stepper_dir')
+<         self.motor_direction = Gpio('motor_dir')
+---
+>         self.stepper_direction = Gpio('direction')
+103d104
+<         self.motor_direction.set_value( 1)
+112,133d112
+<         self.pruss.initialize()
+<         self.ddr = self.pruss.ddr 
+<         self.core_1.load('stream.out')
+<         # if you don't want the ringbuffer at the start of the ddr region, specify offset here
+<         self.MSGBUF_OFFSET = 0
+< 
+<         # you can use a fixed ringbuffer size:
+<         #NUM_MSGS = 1024
+<         # or you can scale the ringbuffer to fit the size of the ddr region:
+<         self.NUM_MSGS = ( self.ddr.size - self.MSGBUF_OFFSET - c_sizeof( uint16 ) ) // c_sizeof( Message )
+<         self.NUM_MSGS = min( self.NUM_MSGS, 65535 )  # make sure number of messages fits in u16
+< 
+<         # map shared memory variables
+<         self.ddr_layout = self.core_1.map( DDRLayout, 0x10000 )
+<         self.shmem = self.core_1.map( SharedVars, 0x10100 )
+<         self.msgbuf = self.ddr.map( Message * self.NUM_MSGS, self.MSGBUF_OFFSET )
+<         self.ddr_widx = self.ddr.map( uint16, self.MSGBUF_OFFSET + c_sizeof( self.msgbuf ) )
+< 
+<         # inform pru about layout of shared ddr memory region
+<         self.ddr_layout.msgbuf       = self.ddr.address + self.MSGBUF_OFFSET
+<         self.ddr_layout.num_msgs     = self.NUM_MSGS
+<         self.ddr_layout.msg_size     = c_sizeof( Message )
+134a114,120
+>     def _timestamp_ns(self):
+>         """Returns the current timestamp in nanoseconds (integer)"""
+>         return self.timestamp_cycles() * 5
+> 
+>     def _timestamp_seconds(self):
+>         """Returns the current timestamp in seconds (floating-point)"""
+>         return self.timestamp_cycles() / 200e6
+138c124,134
+<    
+---
+> 
+>     async def check_position(self):
+>         delay = 0.01 
+>         while (self.active_run == False and self.shut_down == False):
+>             if (self.current_position != self.position.value):
+>                 self.current_position = self.position.value 
+>                 await self.data_queue.put([self.current_position])
+>                 delay = 0.01 
+>             await asyncio.sleep(delay) 
+>             if (delay <= 0.5):
+>                 delay += 0.05
+148a145,152
+>     def _ChangeDirection(self):
+>         if (self.ui.rb_forward.isChecked()):
+>             self.ui.rb_reverse.setChecked(True)
+>             #self.RevRadioButton_on_click(self.motor.ld_compare_a,self.motor.ld_compare_b)
+>         else:
+>             self.ui.rb_forward.setChecked(True)
+>             #self.FwdRadioButton_on_click(self.motor.ld_compare_a,self.motor.ld_compare_b)
+> 
+186,197d189
+<     async def check_position(self):
+<         delay = 0.01 
+<         while (self.active_run == False and self.shut_down == False):
+<             print(' PRU=',self.position.value)
+<             if (self.current_position != self.position.value):
+<                 self.current_position = self.position.value 
+<                 await self.data_queue.put([self.current_position])
+<                 delay = 0.01 
+<             await asyncio.sleep(delay) 
+<             if (delay <= 0.5):
+<                 delay += 0.05
+< 
+228c220,240
+<     async def _StartRun(self):
+---
+>     def _StartRun(self):
+>         # if you don't want the ringbuffer at the start of the ddr region, specify offset here
+>         MSGBUF_OFFSET = 0
+> 
+>         # you can use a fixed ringbuffer size:
+>         #NUM_MSGS = 1024
+>         # or you can scale the ringbuffer to fit the size of the ddr region:
+>         NUM_MSGS = ( ddr.size - MSGBUF_OFFSET - ctypes.sizeof( u16 ) ) // ctypes.sizeof( Message )
+>         NUM_MSGS = min( NUM_MSGS, 65535 )  # make sure number of messages fits in u16
+> 
+>         # map shared memory variables
+>         ddr_layout = core.map( DDRLayout, 0x10000 )
+>         shmem = core.map( SharedVars, 0x10100 )
+>         msgbuf = ddr.map( Message * NUM_MSGS, MSGBUF_OFFSET )
+>         ddr_widx = ddr.map( u16, MSGBUF_OFFSET + ctypes.sizeof( msgbuf ) )
+> 
+>         # inform pru about layout of shared ddr memory region
+>         ddr_layout.msgbuf       = ddr.address + MSGBUF_OFFSET
+>         ddr_layout.num_msgs     = NUM_MSGS
+>         ddr_layout.msg_size     = ctypes.sizeof( Message )
+> 
+230,231c242,243
+<         self.ridx = 0
+<         self.widx = 0
+---
+>         ridx = 0
+>         widx = 0
+234,235c246,247
+<         self.shmem.ridx = self.ridx
+<         self.ddr_widx.value = self.widx
+---
+>         shmem.ridx = ridx
+>         ddr_widx.value = widx
+238,239c250,251
+<         print('lauching core 1')
+<         self.core_1.run()
+---
+>         
+>         core_1.run()
+241,244c253,257
+<             while (self.active_run == False and self.shut_down == False):
+<                 await self.recv_messages()
+<                 await self.check_core()
+<                 await asyncio.sleep( 0 )
+---
+>             while True:
+>                 recv_messages()
+>                 check_core()
+> 
+>                 asynicio.sleep( 0.01 )
+251,265c264
+<             self.core_1.halt()
+<             self.pruss.uart.io.write( b'FFV\r', discard=True, flush=True )  # interrupt continuous transmission
+<             await asyncio.sleep( 0.01 )  # make sure that response has been received
+<             self.pruss.uart.io.discard()  # discard response            
+<             self.pruss.uart.io.close() 
+<             self.pruss.uart.initialize(baudrate = 460800)
+<     
+<     
+<     def _ChangeDirection(self):
+<         print('Executing direction change')
+<         val = self.motor_direction.get_value() 
+<         if (int(val) == 0):
+<             self.motor_direction.set_value( 1 ) 
+<         else: 
+<             self.motor_direction.set_value( 0 ) 
+---
+>             core_1.halt()
+271a271
+>         
+275,325d274
+< 
+<     async def _SetTop(self):
+<         self.motor.ld_compare_a = int(self.period/15)
+<         self.motor.ld_compare_b = 0
+<         self.core_1.load('find_max.out')
+<         self.core_1.run()
+<         counter = 0
+<         max_weight = 0
+<         max_position = 0
+<         prev_weight = 0
+<         max_counter = 0
+<         desc_counter = 0
+<         print('getting started') 
+<         while(self.shut_down == False):
+<             position = self.pruvars.position
+<             weight = self.pruvars.force
+<             print("Counter {} Max_Counter {} Descreasing Counter {}".format(counter,max_counter,desc_counter))
+<             print("Current Weight {} Max Weight {}".format(weight,max_weight))
+<             if (weight >= prev_weight):
+<                 desc_counter = 0
+<                 print("weight increaseing new max weight set")
+<                 if (weight > max_weight):
+<                     max_weight = weight
+<                     max_position = (position + 1) % 4096
+<                     max_counter = 0
+<                 else:
+<                     print("weight increasing but below max weight")
+<                     max_counter = max_counter + 1
+<             else:
+<                 max_counter = max_counter + 1
+<                 if (desc_counter > 3):
+<                     print("Weight dscresing for too long changing direction")
+<                     self._ChangeDirection()
+<                     desc_counter = 0
+<                 else:
+<                     print("Weight descrsing but not long enough to give up this way")
+<                     desc_counter = desc_counter + 1
+<             if (max_counter > 30 or counter > 500):
+<                 break
+<             counter = counter + 1
+<             prev_weight = weight
+<             await asyncio.sleep(0.1)
+<             val = str(position) + ',' + str(weight)
+<             await self.data_queue.put(val)
+< 
+<         self.pruss.uart.io.write( b'FFV\r', discard=True, flush=True )  # interrupt continuous transmission
+<         sleep( 0.1 )  # make sure that response has been received
+<         self.pruss.uart.io.discard()  # discard response
+<         self.core_1.halt()
+<         print('Finished')
+< 
+409,412c358,360
+<             await self._StartRun()
+<             result = 'OK' #istr(self._StartRun())
+<             term1 = 'FREESPIN,'
+<             term2 = 'STATUS,'
+---
+>             result = str(self._StartRun())
+>             term1 = 'FREESPIN'
+>             term2 = 'STATUS'
+474,476c422,424
+<         elif(message[0] == "SET_TOP"):
+<             await self._SetTop() 
+<             term1 = 'LOADCELL,'
+---
+>         elif(message[0] == "GO_TOP"):
+>             print('trying to go to top')
+>             term1 = 'POSITION,'
+499,501c447,448
+<     async def check_core(self):
+<         
+<         if not self.core_1.halted:
+---
+>     def check_core():
+>         if not core.halted:
+503,506c450,454
+<         if self.core_1.state.crashed:
+<             msg = f'core crashed at pc={self.core_1.pc}'
+<         elif self.shmem.abort_file == 0:
+<             msg = f'core halted at pc={self.core_1.pc}'
+---
+> 
+>         if core.state.crashed:
+>             msg = f'core crashed at pc={core.pc}'
+>         elif shmem.abort_file == 0:
+>             msg = f'core halted at pc={core.pc}'
+509c457
+<             abort_file = self.core_1.read( char * 32, self.shmem.abort_file ).value
+---
+>             abort_file = core.read( ctypes.c_char * 32, shmem.abort_file ).value
+511c459
+<             msg = f'core aborted at pc={self.core_1.pc} ({abort_file}:{self.shmem.abort_line})'
+---
+>             msg = f'core aborted at pc={core.pc} ({abort_file}:{shmem.abort_line})'
+514,516c462,464
+<         msg += f'\n   ridx       = {self.ridx}'
+<         msg += f'\n   shmem.ridx = {self.shmem.ridx}'
+<         msg += f'\n   ddr_widx   = {self.ddr_widx.value}'
+---
+>         msg += f'\n   ridx       = {ridx}'
+>         msg += f'\n   shmem.ridx = {shmem.ridx}'
+>         msg += f'\n   ddr_widx   = {ddr_widx.value}'
+520c468
+<         astid = 0
+---
+>         lastid = 0
+522c470,471
+<     async def recv_messages(self):
+---
+>     def recv_messages():
+>         global ridx, widx, lastid
+525,526c474,475
+<         self.widx = self.ddr_widx.value
+<         assert self.widx < self.NUM_MSGS  # sanity-check
+---
+>         widx = ddr_widx.value
+>         assert widx < NUM_MSGS  # sanity-check
+528,530d476
+<         position = 0
+<         force = 0 
+<         timestamp = 0
+532,533c478
+<         
+<         while self.ridx != self.widx:
+---
+>         while ridx != widx:
+536c481,482
+<             msg = self.msgbuf[ self.ridx ]
+---
+>             msg = msgbuf[ ridx ]
+> 
+538,554c484,495
+<             self.lastid = ( self.lastid + 1 ) & 0xffffffff
+<             assert msg.id == self.lastid
+<             # get 32-bit timestamp (in cycles) from message and unwrap it:
+<             self.timestamp_cycles += ( msg.timestamp - self.timestamp_cycles ) & 0xfffffff    
+<             # convert to timestamp in seconds    
+<             timestamp = self.timestamp_cycles / 200e6    
+<             position = msg.position    
+<             force = msg.force    
+<             # consume message and update read pointe    
+<             del msg  
+<             # direct access to message forbidden beyond this poin    
+<             self.ridx += 1    
+<             if (self.ridx == self.NUM_MSGS):
+<                 self.ridx = 0      
+<             self.shmem.ridx = self.ridx
+<             #update user interface
+<             print(f'\ridx=0x{self.ridx:04x} id=0x{self.lastid:08x} time={timestamp:08f} position={position} force={force:08d}', end='', flush=True ) 
+---
+>             lastid = ( lastid + 1 ) & 0xffffffff
+>             assert msg.id == lastid
+> 
+>             # consume message and update read pointer
+>             del msg  # direct access to message forbidden beyond this point
+>             ridx += 1
+>             if ridx == NUM_MSGS:
+>                 ridx = 0
+>             shmem.ridx = ridx
+> 
+>             # update user interface
+>             print( f'\ridx=0x{ridx:04x} id=0x{lastid:08x} ', end='', flush=True )
+594d534
+< 

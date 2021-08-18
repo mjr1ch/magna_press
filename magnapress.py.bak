@@ -1,0 +1,140 @@
+import sys # We need sys so that we can pass argv to QApplication
+from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer, QThread, QObject, QThreadPool
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QDialog, QMessageBox
+from mainmenu import Ui_MainWindow 
+from calibrate_loadcell import Ui_Calibrate_LoadCell
+from calibrate_position import Ui_Calibrate_Position
+from freespin import Ui_FreeSpin
+from pc_server import SingleCommand
+
+
+class Generic_Window():
+
+    def COM_to_Beagle(self,message):
+        command = SingleCommand(message)
+        self.parent().RunTasks(command)
+
+class Calibrate_LoadCell_Window(QMainWindow):
+    """
+    This "window" is a QWidget. If it has no parent, it
+    will appear as a free-floating window as we want.
+    """
+
+    ui = Ui_Calibrate_LoadCell()
+    def __init__(self, parent):
+        super(Calibrate_LoadCell_Window,self).__init__(parent)
+        self.ui.setupUi(self)
+        self.ui.bttn_BACK_MAIN.clicked.connect(self.Return_To_MainMenu)
+        
+    @pyqtSlot()
+    def Return_To_MainMenu(self):
+        self.hide()
+        self.parent().Toggle_Window(self.parent())
+
+class Calibrate_Position_Window(QMainWindow,Generic_Window):
+    """
+    This "window" is a QWidget. If it has no parent, it
+    will appear as a free-floating window as we want.
+    """
+    ui = Ui_Calibrate_Position()
+
+    def __init__(self, parent):
+        super(Calibrate_Position_Window,self).__init__(parent)
+        self.ui.setupUi(self)
+        self.ui.bttn_BACK_MAIN.clicked.connect(self.Return_To_MainMenu)
+        self.ui.bttn_START.clicked.connect(
+            lambda x: self.COM_to_Beagle("Start_Motor")
+        )
+        self.ui.bttn_STOP.clicked.connect(
+            lambda x: self.COM_to_Beagle("Stop_Motor")
+        )
+        self.ui.bttn_GO_TOP.clicked.connect(
+            lambda x: self.COM_to_Beagle("Go_Top")
+        )
+        self.ui.bttn_SET_TOP.clicked.connect(
+            lambda x: self.COM_to_Beagle("Set_Top")
+        )
+        self.ui.bttn_GO_BOTTOM.clicked.connect(
+            lambda x: self.COM_to_Beagle("Go_Bottom")
+        )
+        self.ui.bttn_SET_BOTTOM.clicked.connect(
+            lambda x: self.COM_to_Beagle("Set_Bottom")
+        )
+    
+    @pyqtSlot()
+    def Return_To_MainMenu(self):
+        self.parent().Toggle_Window(self)
+        self.parent().Toggle_Window(self.parent())
+
+class FreeSpin_Window(QMainWindow):
+    """
+    This "window" is a QWidget. If it has no parent, it
+    will appear as a free-floating window as we want.
+    """
+    ui = Ui_FreeSpin()
+    def __init__(self, parent):
+        super(FreeSpin_Window,self).__init__(parent)
+        self.ui.setupUi(self)
+        self.ui.bttn_BACK_MAIN.clicked.connect(self.Return_To_MainMenu)
+        #self.label = QLabel("Calibrate the Load Cell")
+
+    @pyqtSlot()
+    def Return_To_MainMenu(self):
+        self.hide()
+        self.parent().Toggle_Window(self.parent())
+
+class MainWindow(QMainWindow):
+
+    ui = Ui_MainWindow()
+    
+    def __init__(self, parent=None):	
+        super().__init__()
+        self.ui.setupUi(self)
+        self.ui.bttn_CALIBRATE_LC.clicked.connect(
+                lambda x: self.Toggle_Window(self.loadcell_window)
+        ) 
+        self.ui.bttn_CALIBRATE_P.clicked.connect(
+                lambda x: self.Toggle_Window(self.position_window)
+        )
+        self.ui.bttn_TIME_LAPSE.clicked.connect(
+                lambda x: self.Toggle_Window(self.freespin_widnow)
+        )
+        self.loadcell_window = Calibrate_LoadCell_Window(self)
+        self.freespin_window = FreeSpin_Window(self)
+        self.position_window = Calibrate_Position_Window(self)
+
+    def RunTasks(self,thread_to_run):
+        threadCount = QThreadPool.globalInstance().maxThreadCount()
+        pool = QThreadPool.globalInstance()
+        pool.start(thread_to_run)
+
+    @pyqtSlot()
+    def Launch_Calibration_LoadCell(self):
+        self.hide()
+        self.loadcell_window.showMaximized() 
+
+    def Toggle_Window(self,window):
+        if window.isVisible():
+            window.hide()
+        else:
+            window.showMaximized()
+
+    @pyqtSlot()
+    def Launch_Calibration_Position(self):
+        self.hide()
+        self.loadcell_window.showMaximized() 
+
+    @pyqtSlot()
+    def Launch_FreeSpin(self):
+        self.hide()
+        self.loadcell_window.showMaximized() 
+
+def main():
+    app = QApplication(sys.argv) # A new instance of QApplicatio0n
+    screen = MainWindow()
+    screen.showMaximized()
+    sys.exit(app.exec())
+
+if __name__ == '__main__':
+    main()

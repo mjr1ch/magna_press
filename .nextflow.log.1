@@ -1,0 +1,40 @@
+Aug-16 13:57:48.977 [main] DEBUG nextflow.cli.Launcher - $> nextflow run test.nf
+Aug-16 13:57:49.033 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 21.04.3
+Aug-16 13:57:49.049 [main] INFO  nextflow.cli.CmdRun - Launching `test.nf` [golden_mirzakhani] - revision: 887b5867be
+Aug-16 13:57:49.096 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/home/magnapress/.nextflow/plugins
+Aug-16 13:57:49.098 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Aug-16 13:57:49.099 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins local root: .nextflow/plr/empty
+Aug-16 13:57:49.104 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Aug-16 13:57:49.105 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Aug-16 13:57:49.107 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Aug-16 13:57:49.115 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Aug-16 13:57:49.147 [main] DEBUG nextflow.Session - Session uuid: 18f6fa09-f557-4b91-a758-1df8dc676fbf
+Aug-16 13:57:49.147 [main] DEBUG nextflow.Session - Run name: golden_mirzakhani
+Aug-16 13:57:49.149 [main] DEBUG nextflow.Session - Executor pool size: 16
+Aug-16 13:57:49.171 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 21.04.3 build 5560
+  Created: 21-07-2021 15:09 UTC (11:09 EDT)
+  System: Linux 5.10.0-0.bpo.8-amd64
+  Runtime: Groovy 3.0.7 on OpenJDK 64-Bit Server VM 11.0.12+7-post-Debian-2deb10u1
+  Encoding: UTF-8 (UTF-8)
+  Process: 3362@diekmanlab-4006 [127.0.1.1]
+  CPUs: 16 - Mem: 7.5 GB (512.3 MB) - Swap: 31.2 GB (31.2 GB)
+Aug-16 13:57:49.190 [main] DEBUG nextflow.Session - Work-dir: /home/magnapress/magnapress/work [ext2/ext3]
+Aug-16 13:57:49.190 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /home/magnapress/magnapress/bin
+Aug-16 13:57:49.197 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Aug-16 13:57:49.205 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Aug-16 13:57:49.290 [main] DEBUG nextflow.Session - Session start invoked
+Aug-16 13:57:49.798 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Aug-16 13:57:49.815 [main] DEBUG nextflow.Session - Workflow process names [dsl1]: grab_images
+Aug-16 13:57:49.837 [PathVisitor-1] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: ./images/; pattern: *.npy; options: [:]
+Aug-16 13:57:49.877 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Aug-16 13:57:49.877 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Aug-16 13:57:49.881 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Aug-16 13:57:49.884 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=16; memory=7.5 GB; capacity=16; pollInterval=100ms; dumpInterval=5m
+Aug-16 13:57:49.956 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Aug-16 13:57:49.956 [main] DEBUG nextflow.Session - Session await
+Aug-16 13:57:49.964 [main] DEBUG nextflow.Session - Session await > all process finished
+Aug-16 13:57:49.990 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Aug-16 13:57:49.998 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=0; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=0ms; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=0; peakCpus=0; peakMemory=0; ]
+Aug-16 13:57:50.110 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Aug-16 13:57:50.124 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

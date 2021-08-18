@@ -1,0 +1,271 @@
+from pypylon import pylon
+import cv2
+import sys
+import numpy as np
+from scipy.interpolate import interp2d
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QImage, QPixmap
+from freespin import Ui_FreeSpin
+from PyQt5.QtWidgets import QApplication
+import asyncio 
+import inspect
+from PyQt5.QtCore import QRect
+from time import sleep 
+import math
+import csv
+
+class Visualize_Sample():
+    
+    camera = None    
+    calibration = True
+    top_left_corner = (0,0)
+    width_and_height = (100,100)
+    finalthreshold_low = 0
+    finalthreshold_high = 255
+    final_dark_tol = 1
+    final_index_pad = 1
+    final_bottom_trim = 2
+    capture_profile = False
+    base_profile = None
+    image_stream = None
+    final_canny_max = 0 
+    final_canny_min = 0   
+    width = 0
+    height = 0
+    line1 = None 
+    line2 = None 
+    image_counter = 0 
+    data_file = None
+    writer = None 
+
+    def __init__(self):
+        #super(Visualize_Sample,self).__init__(parent.ui)
+        self.init_camera()
+
+    async def get_profile(self):
+       
+        self.capture_profile = True
+        await asyncio.sleep(0.0001)
+        self.image_stream.cancel()
+        self.camera.StopGrabbing()
+
+    async def stop_run(self):
+        self.camera.StopGrabbing()
+        self.image_stream.cancel()
+
+    def calibrate_aquisition(self,img):
+        canny_max = 0 
+        canny_min = 0
+        
+        imh, imw = img.shape[:2]
+        p0 = img
+        im_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        thresh_HL = int(self.parent.ui.sld_THRESHOLD_HL.value())
+        thresh_LL = int(self.parent.ui.sld_THRESHOLD_LL.value())
+        _, thresh = cv2.threshold(im_gray, thresh_LL, thresh_HL, cv2.THRESH_BINARY)
+        p1 = thresh
+        sum_rows = thresh.sum(axis=1)
+        sum_cols = thresh.sum(axis=0)
+        dark_tol = int(self.parent.ui.sld_DARK_TOLERANCE.value())
+        white_tol_min = int(self.parent.ui.sld_WHITE_TOLERANCE_MIN.value())
+        white_tol_max = int(self.parent.ui.sld_WHITE_TOLERANCE_MAX.value())
+        x_indices = np.where(sum_cols < sum_cols.min() + dark_tol)[0]
+        white_ub = sum_rows.max() - white_tol_max
+        white_lb = sum_rows.max() - white_tol_min
+        #y_indices = np.where(np.logical_and(np.greater_equal(white_lb, sum_rows),np.less(sum_rows,white_ub)))[0]
+#        y_indices = np.where(sum_rows > sum_rows.max() - 40000)[0]
+        y_indices = np.where(np.logical_and(np.greater(sum_rows,sum_rows.max() - white_tol_min),np.less_equal(sum_rows,sum_rows.max() - white_tol_max)))[0]
+#        y_indices = np.where(np.greater_equal(white_lb, sum_rows))[0]
+        x1, x2 = x_indices[0] - 5, x_indices[-1] + 5
+        y1, y2 = y_indices[0] - 5, y_indices[-1] + 5
+        if (x1 < 0):
+            x1 = 1
+        if (x2 > 4024):
+            x2 = 4023
+        if (y1 < 0):
+            y1 = 1
+        if (y2 > 3036):
+            y2 = 3035
+        canny_max = int(self.parent.ui.sld_CANNY_MAX.value())
+        canny_min = int(self.parent.ui.sld_CANNY_MIN.value())
+        img_canny = cv2.Canny(thresh[y1: y2, x1: x2], canny_min, canny_max,L2gradient=True)
+        p2 = img
+        contours, _ = cv2.findContours(img_canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        print(len(contours))
+        cv2.line(p2, (x1, y1), (x2, y1), (255, 0, 160), 5)
+        cv2.line(p2, (x1, y2), (x2, y2), (255, 0, 160), 5)
+        cv2.drawContours(p2[y1: y2, x1: x2], contours, -1, (0, 0, 255), 10)
+        width = int(self.parent.ui.sld_WIDTH.value()/2)
+        height = int(self.parent.ui.sld_HEIGHT.value()/2)
+        print(f'width={width} height={height}')
+        p2 = p2[y1 - height:y2 + height,x1 - width:x2 + width]
+        if (self.capture_profile):
+            self.finalthreshold_high = thresh_HL
+            self.finalthreshold_low = thresh_LL 
+            self.final_dark_tol = dark_tol 
+            self.final_white_tol = white_tol
+            self.final_canny_max = canny_max  
+            self.final_canny_min = canny_min  
+            self.width = width
+            self.height = height
+            self.base_profile = contours
+            self.line1 = [(x1, y1), (x2, y1)]
+            self.line2 = [(x1, y2), (x2, y2)]
+            self.capture_profile = False
+        p0 = cv2.cvtColor(p0, cv2.COLOR_BGR2RGB)
+        p2 = cv2.cvtColor(p2, cv2.COLOR_BGR2RGB)
+        return p0, p1 , p2
+
+    def process_image(self,im):
+        print('processing image')
+        p0 = im
+        im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(im_gray, self.finalthreshold_low, self.finalthreshold_high, cv2.THRESH_BINARY)
+        sum_rows = thresh.sum(axis=1)
+        sum_cols = thresh.sum(axis=0)
+        x_indices = np.where(sum_cols < sum_cols.min() + self.final_dark_tol)[0]
+        y_indices = np.where(sum_cols > sum_cols.max() - self.final_white_tol)[0]
+        x1, x2 = x_indices[0] - 5, x_indices[-1] + 5
+        y1, y2 = y_indices[0] - 5, y_indices[-1] + 5
+        if (x1 < 0):
+            x1 = 1
+        if (x2 > 4024):
+            x2 = 4023
+        if (y1 < 0):
+            y1 = 1
+        if (y2 > 3036):
+            y2 = 3035
+        img_canny = cv2.Canny(thresh[y1: y2, x1: x2], self.final_canny_min, self.final_canny_max,L2gradient=True)
+        contours, _ = cv2.findContours(img_canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.line(img, (x1, y1), (x2, y1), (255, 0, 160), 5)
+        cv2.line(img, (x1, y2), (x2, y2), (255, 0, 160), 5)
+        cv2.drawContours(img[y1: y2, x1: x2], contours, -1, (0, 0, 255), 10)
+        cv2.line(p0, self.line1[0], self.line1[1], (0, 255, 255), 2)
+        cv2.line(p0, self.line2[0], self.line2[1], (0, 255, 255), 2)
+        y1_o, y2_o = min(self.line1[0][1], self.line1[1][1]), max(self.line2[0][1],self.line2[1][1])
+        x1_o = self.line1[0][0]
+        x2_o = self.line1[1][0]
+        cv2.drawContours(p0[y1_o: y2_o, x1_o:x2_o], self.base_profile, -1, (0,255,255), 2)
+        cv2.drawContours(p0[y1: y2, x1: x2], contours, -1, (255, 0, 0), 3)
+        p0 = p0[y1_o - self.height:y2_o + self.height,x1_o - self.width:x2_o + self.width]
+        h, w, ch  = p0.shape
+        h1 = abs(y2 - y1)
+        h2 = abs(y2_o - y1_o)
+        strain = float (100 - h1/h2*100)
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        # org
+        org = (int(w/4),int( h/2))
+        # fontScale
+        fontScale = 1
+        # Blue color in BGR
+        color = (255, 255, 0)
+        # Line thickness of 2 px
+        thickness = 7
+        self.Emit_Strain(strain)
+        temp1 = str(round(strain,2))
+        temp2 = "% Strain"
+        image_label = temp1 + temp2 
+        p0 = cv2.putText(p0,image_label, org, font,fontScale, color, thickness, cv2.LINE_AA)
+        p0 = cv2.cvtColor(p0, cv2.COLOR_BGR2RGB)
+        self.image_counter += 1
+        time,force,position = self.parent.Emit_Data()
+        data = [str(self.current_time),str(self_current_force),str(self.current_position),str(strain)]
+        filename = f'./images/image-{self.image_counter}.tiff'
+        #cv2.imwrite(filename,p0)
+        self.writer.writerow(data)
+        return p0
+
+    def init_camera(self):
+        serial_number = '23437639'
+        info = None 
+        for i in pylon.TlFactory.GetInstance().EnumerateDevices():
+            if i.GetSerialNumber() == serial_number:
+                info = i 
+                break  
+        else:
+            print('Camera with {} serial number not found '.format(serial_number))
+        if info is not None:
+            self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateDevice(info))
+            self.camera.Open()
+        
+        self.converter = pylon.ImageFormatConverter()
+        # converting to opencv bgr format
+        self.converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+        self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+
+    async def grabbing_image(self):
+        while self.camera.IsGrabbing():
+            grabResult = self.camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+            if grabResult.GrabSucceeded():             
+                img = self.converter.Convert(grabResult)
+                img = img.GetArray()
+                h, w, ch  = img.shape
+                if (self.calibration):
+                    original_img, threshold_img, final_img = self.calibrate_aquisition(img)
+                    bytesPerLine = ch*w
+                    original_QT = QImage(original_img.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                    bytesPerLine = w
+                    threshold_QT = QImage(threshold_img.data, w, h, bytesPerLine, QImage.Format_Grayscale8)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (original_QT.isNull()):
+                        p0 = original_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.original_image.setPixmap(QPixmap.fromImage(p0))
+                    if not (threshold_QT.isNull()):
+                        p1 = threshold_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.threshold_image.setPixmap(QPixmap.fromImage(p1))
+                    if not (final_QT.isNull()):
+                        p2 = final_QT.scaled(800, 600, Qt.KeepAspectRatio)
+                        self.parent.ui.final_image.setPixmap(QPixmap.fromImage(p2))
+                else:
+                    final_img = self.process_image(img)
+                    print(final_img.shape)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (final_QT.isNull()):
+                        p0 = final_QT #.scaled(800, 600, Qt.KeepAspectRatio)  
+                        self.parent.ui.camera_image.setPixmap(QPixmap.fromImage(p0))
+            await asyncio.sleep(0.001)
+
+    async def aquire_images(self,calibration,calling_window):
+        
+        self.parent = calling_window
+        # Grabing Continusely (video) with minimal delay
+        self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+        if (calibration):
+            self.calibration = True 
+        else:
+            self.calibration = False
+            self.data_file = open('run_data.csv', 'w', encoding='UTF8')
+            self.writer = csv.writer(self.data_file)
+            header = ['time', 'force','position', 'strain']
+            self.writer.writerow(header)
+
+        print('trying out emit data')
+        self.image_stream = asyncio.create_task(self.grabbing_image()) 
+
+    def find_nearest_index(self,center,points):
+        distance = np.array(list(map(abs,(points[:,0] - center))))
+        index = np.argmin(distance,axis = 0)
+        rows = points.shape[0]
+        value = points[index][:]
+        return np.reshape(np.delete(points,[index*2,index*2+1]),(rows-1,2)),value
+
+    def remove_bottom_node(self,contour):
+        if (contour != []):
+            index = np.argmax(contour,axis = 0)[1]
+            rows = contour.shape[0]
+            
+            return np.reshape(np.delete(contour,[index*2,index*2+1]),(rows-1,2))
+        else:
+            return contour  
+
+    def get_vertical_distance(self,contour):
+        high_val = contour[np.argmax(contour,axis=0)[1],1]
+        low_val = contour[np.argmin(contour,axis=0)[1],1]
+        return high_val - low_val
+
+

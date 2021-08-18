@@ -1,0 +1,677 @@
+Aug-17 20:44:28.766 [main] DEBUG nextflow.cli.Launcher - $> nextflow run image_eater.nf
+Aug-17 20:44:28.818 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 21.04.3
+Aug-17 20:44:28.851 [main] INFO  nextflow.cli.CmdRun - Launching `image_eater.nf` [happy_swanson] - revision: 887b5867be
+Aug-17 20:44:28.891 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/home/magnapress/.nextflow/plugins
+Aug-17 20:44:28.892 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Aug-17 20:44:28.893 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins local root: .nextflow/plr/empty
+Aug-17 20:44:28.898 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Aug-17 20:44:28.899 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Aug-17 20:44:28.901 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Aug-17 20:44:28.907 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Aug-17 20:44:28.942 [main] DEBUG nextflow.Session - Session uuid: ad342538-e97c-43bc-a12a-6b72096327ff
+Aug-17 20:44:28.942 [main] DEBUG nextflow.Session - Run name: happy_swanson
+Aug-17 20:44:28.943 [main] DEBUG nextflow.Session - Executor pool size: 16
+Aug-17 20:44:28.968 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 21.04.3 build 5560
+  Created: 21-07-2021 15:09 UTC (11:09 EDT)
+  System: Linux 5.10.0-0.bpo.8-amd64
+  Runtime: Groovy 3.0.7 on OpenJDK 64-Bit Server VM 11.0.12+7-post-Debian-2deb10u1
+  Encoding: UTF-8 (UTF-8)
+  Process: 3798@diekmanlab-4006 [127.0.1.1]
+  CPUs: 16 - Mem: 7.5 GB (130 MB) - Swap: 31.2 GB (31.2 GB)
+Aug-17 20:44:28.982 [main] DEBUG nextflow.Session - Work-dir: /home/magnapress/magnapress/work [ext2/ext3]
+Aug-17 20:44:28.982 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /home/magnapress/magnapress/bin
+Aug-17 20:44:28.990 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Aug-17 20:44:28.997 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Aug-17 20:44:29.068 [main] DEBUG nextflow.Session - Session start invoked
+Aug-17 20:44:29.432 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Aug-17 20:44:29.441 [main] DEBUG nextflow.Session - Workflow process names [dsl1]: grab_images
+Aug-17 20:44:29.458 [PathVisitor-1] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: ./images/; pattern: *.npy; options: [:]
+Aug-17 20:44:29.501 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Aug-17 20:44:29.501 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Aug-17 20:44:29.504 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Aug-17 20:44:29.508 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=16; memory=7.5 GB; capacity=16; pollInterval=100ms; dumpInterval=5m
+Aug-17 20:44:29.570 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Aug-17 20:44:29.570 [main] DEBUG nextflow.Session - Session await
+Aug-17 20:44:29.776 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.780 [Task submitter] INFO  nextflow.Session - [8e/daae46] Submitted process > grab_images (10)
+Aug-17 20:44:29.784 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.784 [Task submitter] INFO  nextflow.Session - [47/fd32dc] Submitted process > grab_images (4)
+Aug-17 20:44:29.789 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.790 [Task submitter] INFO  nextflow.Session - [2a/86942d] Submitted process > grab_images (13)
+Aug-17 20:44:29.793 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.793 [Task submitter] INFO  nextflow.Session - [f3/72d9fd] Submitted process > grab_images (6)
+Aug-17 20:44:29.796 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.796 [Task submitter] INFO  nextflow.Session - [f5/af151c] Submitted process > grab_images (8)
+Aug-17 20:44:29.799 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.799 [Task submitter] INFO  nextflow.Session - [c7/69d2ef] Submitted process > grab_images (14)
+Aug-17 20:44:29.802 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.803 [Task submitter] INFO  nextflow.Session - [7c/df086d] Submitted process > grab_images (12)
+Aug-17 20:44:29.806 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.807 [Task submitter] INFO  nextflow.Session - [6b/0cdb23] Submitted process > grab_images (15)
+Aug-17 20:44:29.810 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.812 [Task submitter] INFO  nextflow.Session - [e2/0e2ca7] Submitted process > grab_images (11)
+Aug-17 20:44:29.815 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.845 [Task submitter] INFO  nextflow.Session - [3d/71d169] Submitted process > grab_images (1)
+Aug-17 20:44:29.850 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.860 [Task submitter] INFO  nextflow.Session - [1d/ae42d7] Submitted process > grab_images (16)
+Aug-17 20:44:29.862 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.883 [Task submitter] INFO  nextflow.Session - [a0/906a27] Submitted process > grab_images (7)
+Aug-17 20:44:29.885 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.886 [Task submitter] INFO  nextflow.Session - [c7/9f8759] Submitted process > grab_images (5)
+Aug-17 20:44:29.888 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.892 [Task submitter] INFO  nextflow.Session - [02/c1bca1] Submitted process > grab_images (3)
+Aug-17 20:44:29.896 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.927 [Task submitter] INFO  nextflow.Session - [b8/455e4e] Submitted process > grab_images (2)
+Aug-17 20:44:29.931 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:44:29.932 [Task submitter] INFO  nextflow.Session - [b2/59dac6] Submitted process > grab_images (9)
+Aug-17 20:45:05.899 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 13; name: grab_images (13); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/2a/86942db08e99def3e0ddf3fd964a13]
+Aug-17 20:45:05.903 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:05.904 [Task submitter] INFO  nextflow.Session - [c2/d44c97] Submitted process > grab_images (19)
+Aug-17 20:45:06.910 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: grab_images (1); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/3d/71d1699409e164fbbd9f63d03145b1]
+Aug-17 20:45:06.913 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:06.913 [Task submitter] INFO  nextflow.Session - [8b/baed63] Submitted process > grab_images (18)
+Aug-17 20:45:07.826 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: grab_images (6); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f3/72d9fd643d3de4f2237e412006f1db]
+Aug-17 20:45:07.829 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:07.829 [Task submitter] INFO  nextflow.Session - [05/1201f6] Submitted process > grab_images (17)
+Aug-17 20:45:09.049 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 12; name: grab_images (12); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/7c/df086d5bcd651994f1ec5228223055]
+Aug-17 20:45:09.052 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:09.052 [Task submitter] INFO  nextflow.Session - [7e/2a8e0e] Submitted process > grab_images (20)
+Aug-17 20:45:09.422 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 10; name: grab_images (10); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/8e/daae46f39550bbb531c3e4db9f34f9]
+Aug-17 20:45:09.432 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:09.432 [Task submitter] INFO  nextflow.Session - [67/e2f182] Submitted process > grab_images (21)
+Aug-17 20:45:12.050 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: grab_images (7); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/a0/906a2712f7471d78bc24abe938b7d4]
+Aug-17 20:45:12.057 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:12.057 [Task submitter] INFO  nextflow.Session - [3c/776707] Submitted process > grab_images (23)
+Aug-17 20:45:12.144 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 14; name: grab_images (14); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c7/69d2ef4f89b3e4706b5ae5e4aec1e6]
+Aug-17 20:45:12.147 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:12.147 [Task submitter] INFO  nextflow.Session - [b6/043a5b] Submitted process > grab_images (22)
+Aug-17 20:45:14.346 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 15; name: grab_images (15); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6b/0cdb231fb22de4f7dced3ad167fbb1]
+Aug-17 20:45:14.349 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:14.350 [Task submitter] INFO  nextflow.Session - [6a/027455] Submitted process > grab_images (1122)
+Aug-17 20:45:14.601 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 11; name: grab_images (11); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/e2/0e2ca75248a0ea54cd7374ea087e48]
+Aug-17 20:45:14.605 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:14.605 [Task submitter] INFO  nextflow.Session - [68/e3a3b9] Submitted process > grab_images (24)
+Aug-17 20:45:16.909 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: grab_images (4); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/47/fd32dc001f36801ae51e09eccd5a34]
+Aug-17 20:45:16.912 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:16.912 [Task submitter] INFO  nextflow.Session - [9e/44beca] Submitted process > grab_images (25)
+Aug-17 20:45:18.038 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 6; name: grab_images (3); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/02/c1bca1d62a030ab5e83e004ed26a51]
+Aug-17 20:45:18.063 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:18.065 [Task submitter] INFO  nextflow.Session - [26/299ab3] Submitted process > grab_images (9768)
+Aug-17 20:45:18.800 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 16; name: grab_images (16); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/1d/ae42d79c1cd659c89b7e87a453d21f]
+Aug-17 20:45:18.804 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:18.804 [Task submitter] INFO  nextflow.Session - [fe/a62ebb] Submitted process > grab_images (26)
+Aug-17 20:45:19.371 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: grab_images (2); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/b8/455e4e01ad6ddb041f923d029c3f68]
+Aug-17 20:45:19.377 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:19.377 [Task submitter] INFO  nextflow.Session - [c4/87abd5] Submitted process > grab_images (27)
+Aug-17 20:45:21.496 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9; name: grab_images (9); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/b2/59dac613fb2f84b0d7ea179147f218]
+Aug-17 20:45:21.500 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:21.500 [Task submitter] INFO  nextflow.Session - [95/da0a3d] Submitted process > grab_images (28)
+Aug-17 20:45:28.877 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 24; name: grab_images (24); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/68/e3a3b98dfc081b210aa75c5c9fa460]
+Aug-17 20:45:28.882 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:28.882 [Task submitter] INFO  nextflow.Session - [48/7afdf8] Submitted process > grab_images (29)
+Aug-17 20:45:30.410 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: grab_images (5); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c7/9f8759fc834363a43799b24960e2fa]
+Aug-17 20:45:30.413 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:30.414 [Task submitter] INFO  nextflow.Session - [83/c40422] Submitted process > grab_images (31)
+Aug-17 20:45:32.828 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: grab_images (8); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f5/af151ccdd3c8b3e7e2c6293b48ed1b]
+Aug-17 20:45:32.832 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:32.832 [Task submitter] INFO  nextflow.Session - [21/ce1e13] Submitted process > grab_images (30)
+Aug-17 20:45:49.655 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 23; name: grab_images (23); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/3c/776707e52b668f5ed3dd588c679bf9]
+Aug-17 20:45:49.658 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:49.658 [Task submitter] INFO  nextflow.Session - [a4/481c46] Submitted process > grab_images (32)
+Aug-17 20:45:53.232 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 17; name: grab_images (17); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/05/1201f6d0e5b2878c77833eb9659594]
+Aug-17 20:45:53.236 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:53.236 [Task submitter] INFO  nextflow.Session - [e1/24bf4f] Submitted process > grab_images (34)
+Aug-17 20:45:54.422 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 22; name: grab_images (22); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/b6/043a5be55054a231d72bbdc4355205]
+Aug-17 20:45:54.425 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:54.426 [Task submitter] INFO  nextflow.Session - [42/ee872c] Submitted process > grab_images (33)
+Aug-17 20:45:56.262 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 19; name: grab_images (19); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c2/d44c97b97dfacb7df9a8a966fcca33]
+Aug-17 20:45:56.266 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:56.267 [Task submitter] INFO  nextflow.Session - [9a/dc20ef] Submitted process > grab_images (35)
+Aug-17 20:45:56.659 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1122; name: grab_images (1122); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6a/027455aace8c694149de0304ba9d91]
+Aug-17 20:45:56.662 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:56.662 [Task submitter] INFO  nextflow.Session - [42/cf8606] Submitted process > grab_images (36)
+Aug-17 20:45:56.803 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 31; name: grab_images (31); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/83/c40422bd712a8029c7982252c463c7]
+Aug-17 20:45:56.807 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:56.807 [Task submitter] INFO  nextflow.Session - [4a/eae9a4] Submitted process > grab_images (37)
+Aug-17 20:45:58.019 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 20; name: grab_images (20); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/7e/2a8e0e2cedd3bb98886eabc7be0f6c]
+Aug-17 20:45:58.023 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:58.024 [Task submitter] INFO  nextflow.Session - [1f/586478] Submitted process > grab_images (38)
+Aug-17 20:45:58.032 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 27; name: grab_images (27); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c4/87abd5c0d95918b60c56c6db37af9e]
+Aug-17 20:45:58.043 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:58.044 [Task submitter] INFO  nextflow.Session - [f7/fd3fc8] Submitted process > grab_images (5195)
+Aug-17 20:45:58.904 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9768; name: grab_images (9768); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/26/299ab387ede1efdb4ad2371d42722d]
+Aug-17 20:45:58.908 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:58.908 [Task submitter] INFO  nextflow.Session - [ca/5b83cd] Submitted process > grab_images (39)
+Aug-17 20:45:59.206 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 25; name: grab_images (25); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9e/44beca99780d6b34172b8d2f25214f]
+Aug-17 20:45:59.209 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:45:59.209 [Task submitter] INFO  nextflow.Session - [7b/3b364b] Submitted process > grab_images (40)
+Aug-17 20:46:02.380 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 21; name: grab_images (21); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/67/e2f18296b9699e86d157a2fe435fb7]
+Aug-17 20:46:02.383 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:02.383 [Task submitter] INFO  nextflow.Session - [d8/73ff61] Submitted process > grab_images (41)
+Aug-17 20:46:10.073 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 18; name: grab_images (18); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/8b/baed63c82ec0cf769c55db51f18675]
+Aug-17 20:46:10.077 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:10.077 [Task submitter] INFO  nextflow.Session - [c5/ea9894] Submitted process > grab_images (42)
+Aug-17 20:46:12.688 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 26; name: grab_images (26); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/fe/a62ebba74162ae7b559e841859f4da]
+Aug-17 20:46:12.692 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:12.693 [Task submitter] INFO  nextflow.Session - [50/4975ce] Submitted process > grab_images (43)
+Aug-17 20:46:19.066 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 28; name: grab_images (28); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/95/da0a3dae1b31d0412a7259aaaa4896]
+Aug-17 20:46:19.070 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:19.070 [Task submitter] INFO  nextflow.Session - [26/1d8d54] Submitted process > grab_images (44)
+Aug-17 20:46:25.082 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 30; name: grab_images (30); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/21/ce1e13a4cec64ffa8511b56934d8d2]
+Aug-17 20:46:25.085 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:25.086 [Task submitter] INFO  nextflow.Session - [fc/1c50f5] Submitted process > grab_images (45)
+Aug-17 20:46:31.322 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 32; name: grab_images (32); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/a4/481c465abff416e8e54c6dffa61cb7]
+Aug-17 20:46:31.337 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:31.340 [Task submitter] INFO  nextflow.Session - [75/21f627] Submitted process > grab_images (46)
+Aug-17 20:46:32.377 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 44; name: grab_images (44); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/26/1d8d547ea819ce02035d26a2e79b23]
+Aug-17 20:46:32.383 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:32.383 [Task submitter] INFO  nextflow.Session - [05/cc0e20] Submitted process > grab_images (9539)
+Aug-17 20:46:34.941 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 38; name: grab_images (38); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/1f/586478b798f7ed87aeacf8dbb87d4e]
+Aug-17 20:46:34.944 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:34.945 [Task submitter] INFO  nextflow.Session - [39/b37d52] Submitted process > grab_images (47)
+Aug-17 20:46:35.721 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 29; name: grab_images (29); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/48/7afdf82761c4a4cb28ed4d8fbf6908]
+Aug-17 20:46:35.728 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:35.729 [Task submitter] INFO  nextflow.Session - [ae/97bb19] Submitted process > grab_images (48)
+Aug-17 20:46:38.642 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5195; name: grab_images (5195); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f7/fd3fc835897960207f4abbaa9e3582]
+Aug-17 20:46:38.646 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:38.646 [Task submitter] INFO  nextflow.Session - [fb/733f46] Submitted process > grab_images (49)
+Aug-17 20:46:40.430 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 35; name: grab_images (35); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9a/dc20eff40c84d1be86665b9d946331]
+Aug-17 20:46:40.456 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:40.456 [Task submitter] INFO  nextflow.Session - [c3/3c48b0] Submitted process > grab_images (50)
+Aug-17 20:46:41.438 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 39; name: grab_images (39); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/ca/5b83cdd236129f0d2ab178f63af74c]
+Aug-17 20:46:41.441 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:41.441 [Task submitter] INFO  nextflow.Session - [8a/b73797] Submitted process > grab_images (51)
+Aug-17 20:46:41.637 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 36; name: grab_images (36); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/42/cf8606e09685afe00e191bd3d02747]
+Aug-17 20:46:41.667 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:41.667 [Task submitter] INFO  nextflow.Session - [00/4e6b65] Submitted process > grab_images (52)
+Aug-17 20:46:41.797 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 33; name: grab_images (33); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/42/ee872c28bc495cf905f62c5a193b92]
+Aug-17 20:46:41.800 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:41.801 [Task submitter] INFO  nextflow.Session - [47/f10ac4] Submitted process > grab_images (53)
+Aug-17 20:46:44.581 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 40; name: grab_images (40); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/7b/3b364b23d032e66f76611dff6fdf09]
+Aug-17 20:46:44.584 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:44.584 [Task submitter] INFO  nextflow.Session - [6b/eb03b6] Submitted process > grab_images (54)
+Aug-17 20:46:44.928 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 34; name: grab_images (34); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/e1/24bf4f1bdb5489a1a1baba1ebf39ca]
+Aug-17 20:46:44.930 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:44.930 [Task submitter] INFO  nextflow.Session - [72/70c662] Submitted process > grab_images (55)
+Aug-17 20:46:45.096 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 37; name: grab_images (37); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/4a/eae9a41eea81d266d94db4f4daab56]
+Aug-17 20:46:45.101 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:45.101 [Task submitter] INFO  nextflow.Session - [18/769537] Submitted process > grab_images (56)
+Aug-17 20:46:49.376 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 41; name: grab_images (41); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/d8/73ff6130ff37db17ae8894a36e6962]
+Aug-17 20:46:49.383 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:49.384 [Task submitter] INFO  nextflow.Session - [34/78af88] Submitted process > grab_images (57)
+Aug-17 20:46:51.764 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 42; name: grab_images (42); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c5/ea98947bc9e567980fb19106cdf330]
+Aug-17 20:46:51.767 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:46:51.767 [Task submitter] INFO  nextflow.Session - [b8/c708bd] Submitted process > grab_images (58)
+Aug-17 20:47:04.942 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 43; name: grab_images (43); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/50/4975cef1a6f0657ec4aa279f947eba]
+Aug-17 20:47:04.945 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:04.946 [Task submitter] INFO  nextflow.Session - [12/229903] Submitted process > grab_images (59)
+Aug-17 20:47:13.137 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 47; name: grab_images (47); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/39/b37d52ac6393faa1c278843450e4c4]
+Aug-17 20:47:13.140 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:13.141 [Task submitter] INFO  nextflow.Session - [e9/665dda] Submitted process > grab_images (60)
+Aug-17 20:47:18.104 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 45; name: grab_images (45); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/fc/1c50f56eb66e95eac297c47fea7a1f]
+Aug-17 20:47:18.108 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:18.108 [Task submitter] INFO  nextflow.Session - [48/5053ed] Submitted process > grab_images (61)
+Aug-17 20:47:18.163 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9539; name: grab_images (9539); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/05/cc0e20670b4dd354dfbe7275cfb231]
+Aug-17 20:47:18.226 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:18.227 [Task submitter] INFO  nextflow.Session - [7f/6b58ee] Submitted process > grab_images (62)
+Aug-17 20:47:20.854 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 49; name: grab_images (49); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/fb/733f46f66320a1779ff8e91b2da7dc]
+Aug-17 20:47:20.857 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:20.857 [Task submitter] INFO  nextflow.Session - [37/205666] Submitted process > grab_images (63)
+Aug-17 20:47:24.023 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 46; name: grab_images (46); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/75/21f6272889a490218bcdc2d3a7df48]
+Aug-17 20:47:24.027 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:24.027 [Task submitter] INFO  nextflow.Session - [08/8f5dbf] Submitted process > grab_images (64)
+Aug-17 20:47:24.244 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 48; name: grab_images (48); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/ae/97bb1973424adc3f7470759e67f723]
+Aug-17 20:47:24.246 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:24.246 [Task submitter] INFO  nextflow.Session - [57/c500e0] Submitted process > grab_images (65)
+Aug-17 20:47:26.453 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 50; name: grab_images (50); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c3/3c48b05a3fb69e0b9d39b618b4314d]
+Aug-17 20:47:26.463 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:26.466 [Task submitter] INFO  nextflow.Session - [67/b725e2] Submitted process > grab_images (66)
+Aug-17 20:47:27.290 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 55; name: grab_images (55); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/72/70c662f397da12828654bcf0571408]
+Aug-17 20:47:27.292 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:27.292 [Task submitter] INFO  nextflow.Session - [f8/457f29] Submitted process > grab_images (80)
+Aug-17 20:47:29.894 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 51; name: grab_images (51); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/8a/b73797f60d6c623701526479dab610]
+Aug-17 20:47:29.900 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:29.900 [Task submitter] INFO  nextflow.Session - [dc/f94ab2] Submitted process > grab_images (67)
+Aug-17 20:47:30.720 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 56; name: grab_images (56); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/18/769537f815802d345947ff3074dd5f]
+Aug-17 20:47:30.728 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:30.728 [Task submitter] INFO  nextflow.Session - [67/d95dad] Submitted process > grab_images (68)
+Aug-17 20:47:32.269 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 52; name: grab_images (52); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/00/4e6b65a8ac2a1084a38ae4ad9f9526]
+Aug-17 20:47:32.273 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:32.273 [Task submitter] INFO  nextflow.Session - [77/112054] Submitted process > grab_images (69)
+Aug-17 20:47:32.543 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 53; name: grab_images (53); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/47/f10ac4de417718379a85721fc18eed]
+Aug-17 20:47:32.547 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:32.547 [Task submitter] INFO  nextflow.Session - [66/1be7af] Submitted process > grab_images (70)
+Aug-17 20:47:34.189 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 57; name: grab_images (57); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/34/78af88184c55299311e0a82b1d6d9b]
+Aug-17 20:47:34.193 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:34.193 [Task submitter] INFO  nextflow.Session - [4f/50663d] Submitted process > grab_images (71)
+Aug-17 20:47:34.625 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 58; name: grab_images (58); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/b8/c708bd605b7cd5cef463337d9bb859]
+Aug-17 20:47:34.627 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:34.627 [Task submitter] INFO  nextflow.Session - [27/efacdf] Submitted process > grab_images (72)
+Aug-17 20:47:35.697 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 54; name: grab_images (54); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6b/eb03b609d5725067a0a78df084ce99]
+Aug-17 20:47:35.708 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:35.708 [Task submitter] INFO  nextflow.Session - [00/1f63fc] Submitted process > grab_images (73)
+Aug-17 20:47:47.433 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 62; name: grab_images (62); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/7f/6b58eeb105dc54ea2c801bbee31898]
+Aug-17 20:47:47.436 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:47.437 [Task submitter] INFO  nextflow.Session - [4f/e6cea9] Submitted process > grab_images (87)
+Aug-17 20:47:47.743 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 59; name: grab_images (59); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/12/229903c93c9c6da545da337edc43af]
+Aug-17 20:47:47.746 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:47.747 [Task submitter] INFO  nextflow.Session - [ec/3a27bb] Submitted process > grab_images (74)
+Aug-17 20:47:59.040 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 63; name: grab_images (63); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/37/2056666a34b3db76920eb7a7685f5b]
+Aug-17 20:47:59.050 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:47:59.051 [Task submitter] INFO  nextflow.Session - [6b/c1fc1d] Submitted process > grab_images (9615)
+Aug-17 20:48:04.292 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 67; name: grab_images (67); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/dc/f94ab2ff8341b1ec68520f4e88f931]
+Aug-17 20:48:04.300 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:04.300 [Task submitter] INFO  nextflow.Session - [f0/e44872] Submitted process > grab_images (75)
+Aug-17 20:48:10.033 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 61; name: grab_images (61); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/48/5053ed446df6a973f5a4aaa3bef1ed]
+Aug-17 20:48:10.036 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:10.037 [Task submitter] INFO  nextflow.Session - [2c/c84742] Submitted process > grab_images (76)
+Aug-17 20:48:10.847 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 64; name: grab_images (64); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/08/8f5dbf27eb08a2f771f5488df026ba]
+Aug-17 20:48:10.851 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:10.851 [Task submitter] INFO  nextflow.Session - [f4/0ddcce] Submitted process > grab_images (77)
+Aug-17 20:48:11.600 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 66; name: grab_images (66); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/67/b725e25de96ccda1b758b681871db2]
+Aug-17 20:48:11.603 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:11.603 [Task submitter] INFO  nextflow.Session - [d9/dd7fe8] Submitted process > grab_images (78)
+Aug-17 20:48:11.901 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 68; name: grab_images (68); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/67/d95dadcf74fb2490c8e8c10c909a92]
+Aug-17 20:48:11.904 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:11.905 [Task submitter] INFO  nextflow.Session - [fe/1491a6] Submitted process > grab_images (79)
+Aug-17 20:48:13.155 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 70; name: grab_images (70); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/66/1be7afb8fb2a8e10ae8209042b4a2c]
+Aug-17 20:48:13.160 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:13.161 [Task submitter] INFO  nextflow.Session - [5d/c71223] Submitted process > grab_images (81)
+Aug-17 20:48:15.915 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 60; name: grab_images (60); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/e9/665dda78f8bef0d7cef88f838c2129]
+Aug-17 20:48:15.918 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:15.918 [Task submitter] INFO  nextflow.Session - [58/ed6a6c] Submitted process > grab_images (82)
+Aug-17 20:48:17.587 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 80; name: grab_images (80); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f8/457f292d396ec8525ff4249b7a57e7]
+Aug-17 20:48:17.590 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:17.590 [Task submitter] INFO  nextflow.Session - [10/6da6a1] Submitted process > grab_images (83)
+Aug-17 20:48:21.754 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 69; name: grab_images (69); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/77/1120548a83e5c86e9ab386e0c8b80b]
+Aug-17 20:48:21.756 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:21.757 [Task submitter] INFO  nextflow.Session - [31/396965] Submitted process > grab_images (84)
+Aug-17 20:48:22.098 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 65; name: grab_images (65); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/57/c500e082d5d273f04291640bd8352b]
+Aug-17 20:48:22.101 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:22.102 [Task submitter] INFO  nextflow.Session - [c6/de1113] Submitted process > grab_images (85)
+Aug-17 20:48:24.115 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9615; name: grab_images (9615); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6b/c1fc1de703ecb9f4046832cfefb857]
+Aug-17 20:48:24.118 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:24.119 [Task submitter] INFO  nextflow.Session - [56/183682] Submitted process > grab_images (86)
+Aug-17 20:48:25.739 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 72; name: grab_images (72); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/27/efacdfbe0bfff77dd9857bf51ecd04]
+Aug-17 20:48:25.748 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:25.749 [Task submitter] INFO  nextflow.Session - [68/f47d54] Submitted process > grab_images (90)
+Aug-17 20:48:27.770 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 74; name: grab_images (74); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/ec/3a27bb2de3332ecd1d64cce2503add]
+Aug-17 20:48:27.772 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:27.773 [Task submitter] INFO  nextflow.Session - [b4/d2bfbc] Submitted process > grab_images (88)
+Aug-17 20:48:29.048 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 71; name: grab_images (71); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/4f/50663d0acf809e8047cd164ec54203]
+Aug-17 20:48:29.051 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:29.051 [Task submitter] INFO  nextflow.Session - [9b/fa8f18] Submitted process > grab_images (89)
+Aug-17 20:48:34.524 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 73; name: grab_images (73); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/00/1f63fc33de7c43ae101a878836b8eb]
+Aug-17 20:48:34.529 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:34.529 [Task submitter] INFO  nextflow.Session - [5a/8cf2f0] Submitted process > grab_images (91)
+Aug-17 20:48:37.203 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 87; name: grab_images (87); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/4f/e6cea95aa4bf6ce0321db948c91979]
+Aug-17 20:48:37.207 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:37.207 [Task submitter] INFO  nextflow.Session - [95/bc1ba1] Submitted process > grab_images (92)
+Aug-17 20:48:44.987 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 75; name: grab_images (75); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f0/e44872fc389826dec1e131c94328f6]
+Aug-17 20:48:44.989 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:44.989 [Task submitter] INFO  nextflow.Session - [75/1e65d4] Submitted process > grab_images (93)
+Aug-17 20:48:54.133 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 76; name: grab_images (76); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/2c/c8474281984404b965a9448508b263]
+Aug-17 20:48:54.139 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:54.140 [Task submitter] INFO  nextflow.Session - [ad/9f9afa] Submitted process > grab_images (95)
+Aug-17 20:48:59.295 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 77; name: grab_images (77); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f4/0ddcced7df7fdcc929c9371b9c6d19]
+Aug-17 20:48:59.297 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:59.298 [Task submitter] INFO  nextflow.Session - [0b/4b6cb8] Submitted process > grab_images (96)
+Aug-17 20:48:59.304 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 82; name: grab_images (82); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/58/ed6a6c160fd2c5a57a65682be9f977]
+Aug-17 20:48:59.306 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:59.306 [Task submitter] INFO  nextflow.Session - [ed/19b431] Submitted process > grab_images (5158)
+Aug-17 20:48:59.912 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 83; name: grab_images (83); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/10/6da6a115b793c2434f7f1f4a30809d]
+Aug-17 20:48:59.916 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:48:59.916 [Task submitter] INFO  nextflow.Session - [1c/81b6ef] Submitted process > grab_images (108)
+Aug-17 20:49:00.886 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 78; name: grab_images (78); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/d9/dd7fe8840f76cceba4ea66a7a91be8]
+Aug-17 20:49:00.889 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:00.889 [Task submitter] INFO  nextflow.Session - [03/1cbc51] Submitted process > grab_images (94)
+Aug-17 20:49:01.727 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 79; name: grab_images (79); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/fe/1491a6967111fb2a858cb9002223ce]
+Aug-17 20:49:01.730 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:01.730 [Task submitter] INFO  nextflow.Session - [81/d7341c] Submitted process > grab_images (97)
+Aug-17 20:49:06.255 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 81; name: grab_images (81); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/5d/c71223b1cea6029e7f39054df07ce2]
+Aug-17 20:49:06.258 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:06.258 [Task submitter] INFO  nextflow.Session - [9b/33fbbb] Submitted process > grab_images (98)
+Aug-17 20:49:10.256 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 86; name: grab_images (86); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/56/183682009bd4716aaa2efc8f6d4ad0]
+Aug-17 20:49:10.261 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:10.261 [Task submitter] INFO  nextflow.Session - [d8/7a38f1] Submitted process > grab_images (99)
+Aug-17 20:49:17.195 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 88; name: grab_images (88); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/b4/d2bfbca8f18ba549ddc615b8b7bd14]
+Aug-17 20:49:17.198 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:17.199 [Task submitter] INFO  nextflow.Session - [93/611d76] Submitted process > grab_images (100)
+Aug-17 20:49:17.441 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 85; name: grab_images (85); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c6/de1113b2ba933bbfbe086b13197a86]
+Aug-17 20:49:17.444 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:17.444 [Task submitter] INFO  nextflow.Session - [6d/b87d24] Submitted process > grab_images (101)
+Aug-17 20:49:18.682 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 84; name: grab_images (84); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/31/396965cc5d3d43e1c155e590583852]
+Aug-17 20:49:18.686 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:18.686 [Task submitter] INFO  nextflow.Session - [4b/9da99f] Submitted process > grab_images (102)
+Aug-17 20:49:19.483 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 91; name: grab_images (91); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/5a/8cf2f0de320db09e044dc7ede8cfd0]
+Aug-17 20:49:19.487 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:19.487 [Task submitter] INFO  nextflow.Session - [83/c3c6ad] Submitted process > grab_images (115)
+Aug-17 20:49:25.695 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 89; name: grab_images (89); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9b/fa8f18ba38c6b38543b24126237027]
+Aug-17 20:49:25.701 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:25.701 [Task submitter] INFO  nextflow.Session - [0d/a47f2c] Submitted process > grab_images (105)
+Aug-17 20:49:25.940 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 90; name: grab_images (90); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/68/f47d542a0e346fcf8c0ccc287250da]
+Aug-17 20:49:25.942 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:25.943 [Task submitter] INFO  nextflow.Session - [18/dbc149] Submitted process > grab_images (104)
+Aug-17 20:49:27.352 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 92; name: grab_images (92); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/95/bc1ba1db307b23533f509f5769e0ef]
+Aug-17 20:49:27.356 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:27.357 [Task submitter] INFO  nextflow.Session - [62/fcaa12] Submitted process > grab_images (106)
+Aug-17 20:49:28.601 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 93; name: grab_images (93); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/75/1e65d4de24104f878471c98eb7d8f0]
+Aug-17 20:49:28.605 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:28.606 [Task submitter] INFO  nextflow.Session - [f6/e00e75] Submitted process > grab_images (103)
+Aug-17 20:49:29.704 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 16 -- submitted tasks are shown below
+~> TaskHandler[id: 95; name: grab_images (95); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/ad/9f9afaa3c6712a6e108b654232be79]
+~> TaskHandler[id: 96; name: grab_images (96); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/0b/4b6cb8a49e122f913bd8cc83a9f69d]
+~> TaskHandler[id: 5158; name: grab_images (5158); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/ed/19b431236157e3be369db9cc5bea94]
+~> TaskHandler[id: 108; name: grab_images (108); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/1c/81b6ef7831dc98f40007420998870b]
+~> TaskHandler[id: 94; name: grab_images (94); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/03/1cbc5188516c2ba6089cca7d6d2e2f]
+~> TaskHandler[id: 97; name: grab_images (97); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/81/d7341c9e76f2c8cc6fc9d0df1cdeab]
+~> TaskHandler[id: 98; name: grab_images (98); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/9b/33fbbb893d802d2f869be273e07d7f]
+~> TaskHandler[id: 99; name: grab_images (99); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/d8/7a38f1a66559b958ca8136985f7f52]
+~> TaskHandler[id: 100; name: grab_images (100); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/93/611d7660316eb6419ed028ce39b0b3]
+~> TaskHandler[id: 101; name: grab_images (101); status: RUNNING; exit: -; error: -; workDir: /home/magnapress/magnapress/work/6d/b87d24d45ab393f39b28d90ce1afa6]
+.. remaining tasks omitted.
+Aug-17 20:49:30.706 [Task submitter] DEBUG n.processor.TaskPollingMonitor - %% executor local > tasks in the submission queue: 9682 -- tasks to be submitted are shown below
+~> TaskHandler[id: 107; name: grab_images (107); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/84/640a6e4ce0a156a1810af33aac8501]
+~> TaskHandler[id: 109; name: grab_images (109); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/59/9a8933a82ee6a37f5878048e78d875]
+~> TaskHandler[id: 110; name: grab_images (110); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/75/c5ca51d48b9adff93c87bb6e47b792]
+~> TaskHandler[id: 111; name: grab_images (111); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/34/e9aed58e3aba6dee618f4ad0a44971]
+~> TaskHandler[id: 112; name: grab_images (112); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/84/72ac2b5e279cbb3d9ae03e960825f6]
+~> TaskHandler[id: 113; name: grab_images (113); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/8d/431fa6e526ac99687ab60954c9a266]
+~> TaskHandler[id: 114; name: grab_images (114); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/01/76d909adf838a84e083baed7fc0cfe]
+~> TaskHandler[id: 116; name: grab_images (116); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/89/bd56f6529cbdb9e8227e7da1f0c22b]
+~> TaskHandler[id: 127; name: grab_images (127); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/a4/f3b1bce1c6ee37fbfdf5ab44335597]
+~> TaskHandler[id: 128; name: grab_images (128); status: NEW; exit: -; error: -; workDir: /home/magnapress/magnapress/work/eb/9a88ffb1b7f017a72fd664c4935363]
+.. remaining tasks omitted.
+Aug-17 20:49:39.382 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 97; name: grab_images (97); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/81/d7341c9e76f2c8cc6fc9d0df1cdeab]
+Aug-17 20:49:39.386 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:39.386 [Task submitter] INFO  nextflow.Session - [84/640a6e] Submitted process > grab_images (107)
+Aug-17 20:49:42.247 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 94; name: grab_images (94); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/03/1cbc5188516c2ba6089cca7d6d2e2f]
+Aug-17 20:49:42.251 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:42.251 [Task submitter] INFO  nextflow.Session - [59/9a8933] Submitted process > grab_images (109)
+Aug-17 20:49:43.043 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 96; name: grab_images (96); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/0b/4b6cb8a49e122f913bd8cc83a9f69d]
+Aug-17 20:49:43.047 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:43.047 [Task submitter] INFO  nextflow.Session - [75/c5ca51] Submitted process > grab_images (110)
+Aug-17 20:49:43.775 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 95; name: grab_images (95); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/ad/9f9afaa3c6712a6e108b654232be79]
+Aug-17 20:49:43.779 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:43.779 [Task submitter] INFO  nextflow.Session - [34/e9aed5] Submitted process > grab_images (111)
+Aug-17 20:49:44.269 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 108; name: grab_images (108); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/1c/81b6ef7831dc98f40007420998870b]
+Aug-17 20:49:44.271 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:44.271 [Task submitter] INFO  nextflow.Session - [84/72ac2b] Submitted process > grab_images (112)
+Aug-17 20:49:44.281 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5158; name: grab_images (5158); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/ed/19b431236157e3be369db9cc5bea94]
+Aug-17 20:49:44.285 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:44.290 [Task submitter] INFO  nextflow.Session - [c8/32cdac] Submitted process > grab_images (9378)
+Aug-17 20:49:50.090 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 99; name: grab_images (99); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/d8/7a38f1a66559b958ca8136985f7f52]
+Aug-17 20:49:50.093 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:50.093 [Task submitter] INFO  nextflow.Session - [8d/431fa6] Submitted process > grab_images (113)
+Aug-17 20:49:55.988 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 98; name: grab_images (98); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9b/33fbbb893d802d2f869be273e07d7f]
+Aug-17 20:49:55.992 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:55.992 [Task submitter] INFO  nextflow.Session - [01/76d909] Submitted process > grab_images (114)
+Aug-17 20:49:58.711 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 102; name: grab_images (102); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/4b/9da99fb62c217c5afa6f43247815e9]
+Aug-17 20:49:58.715 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:58.715 [Task submitter] INFO  nextflow.Session - [89/bd56f6] Submitted process > grab_images (116)
+Aug-17 20:49:59.976 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 100; name: grab_images (100); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/93/611d7660316eb6419ed028ce39b0b3]
+Aug-17 20:49:59.981 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:49:59.982 [Task submitter] INFO  nextflow.Session - [a4/f3b1bc] Submitted process > grab_images (127)
+Aug-17 20:50:00.226 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 101; name: grab_images (101); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6d/b87d24d45ab393f39b28d90ce1afa6]
+Aug-17 20:50:00.228 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:00.228 [Task submitter] INFO  nextflow.Session - [eb/9a88ff] Submitted process > grab_images (128)
+Aug-17 20:50:02.546 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 115; name: grab_images (115); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/83/c3c6ad8997ce378de3f7eda655fa03]
+Aug-17 20:50:02.548 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:02.549 [Task submitter] INFO  nextflow.Session - [fa/09fda4] Submitted process > grab_images (130)
+Aug-17 20:50:07.869 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 109; name: grab_images (109); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/59/9a8933a82ee6a37f5878048e78d875]
+Aug-17 20:50:07.880 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:07.880 [Task submitter] INFO  nextflow.Session - [08/c402cc] Submitted process > grab_images (117)
+Aug-17 20:50:10.870 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 103; name: grab_images (103); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f6/e00e7529e6586f0bb6a7275a9542ef]
+Aug-17 20:50:10.874 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:10.874 [Task submitter] INFO  nextflow.Session - [05/ca1fe7] Submitted process > grab_images (118)
+Aug-17 20:50:12.445 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 104; name: grab_images (104); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/18/dbc14960592db22b2846bd96febc86]
+Aug-17 20:50:12.451 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:12.451 [Task submitter] INFO  nextflow.Session - [60/afb783] Submitted process > grab_images (119)
+Aug-17 20:50:12.973 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 105; name: grab_images (105); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/0d/a47f2cf621752429207e45591c7611]
+Aug-17 20:50:12.976 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:12.976 [Task submitter] INFO  nextflow.Session - [ab/8faacc] Submitted process > grab_images (121)
+Aug-17 20:50:15.046 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 106; name: grab_images (106); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/62/fcaa12945eff43b15d527042e8bfe0]
+Aug-17 20:50:15.050 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:15.050 [Task submitter] INFO  nextflow.Session - [89/650d64] Submitted process > grab_images (122)
+Aug-17 20:50:23.573 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 110; name: grab_images (110); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/75/c5ca51d48b9adff93c87bb6e47b792]
+Aug-17 20:50:23.576 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:23.576 [Task submitter] INFO  nextflow.Session - [dd/161927] Submitted process > grab_images (123)
+Aug-17 20:50:28.754 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 111; name: grab_images (111); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/34/e9aed58e3aba6dee618f4ad0a44971]
+Aug-17 20:50:28.757 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:28.757 [Task submitter] INFO  nextflow.Session - [9c/f046a6] Submitted process > grab_images (124)
+Aug-17 20:50:34.016 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 113; name: grab_images (113); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/8d/431fa6e526ac99687ab60954c9a266]
+Aug-17 20:50:34.033 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:34.033 [Task submitter] INFO  nextflow.Session - [4c/b85a8b] Submitted process > grab_images (125)
+Aug-17 20:50:36.470 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 107; name: grab_images (107); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/84/640a6e4ce0a156a1810af33aac8501]
+Aug-17 20:50:36.473 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:36.473 [Task submitter] INFO  nextflow.Session - [2b/d366ef] Submitted process > grab_images (126)
+Aug-17 20:50:37.141 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9378; name: grab_images (9378); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c8/32cdac2e3117e5c8c4560f645578a8]
+Aug-17 20:50:37.143 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:37.143 [Task submitter] INFO  nextflow.Session - [f7/2b20cd] Submitted process > grab_images (137)
+Aug-17 20:50:41.139 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 128; name: grab_images (128); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/eb/9a88ffb1b7f017a72fd664c4935363]
+Aug-17 20:50:41.141 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:41.142 [Task submitter] INFO  nextflow.Session - [3d/efb0e1] Submitted process > grab_images (120)
+Aug-17 20:50:43.119 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 127; name: grab_images (127); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/a4/f3b1bce1c6ee37fbfdf5ab44335597]
+Aug-17 20:50:43.122 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:43.122 [Task submitter] INFO  nextflow.Session - [9d/34f5a0] Submitted process > grab_images (129)
+Aug-17 20:50:47.313 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 117; name: grab_images (117); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/08/c402ccb5adefefb164ed6aa7a97307]
+Aug-17 20:50:47.319 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:47.319 [Task submitter] INFO  nextflow.Session - [7c/a9d761] Submitted process > grab_images (138)
+Aug-17 20:50:47.956 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 116; name: grab_images (116); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/89/bd56f6529cbdb9e8227e7da1f0c22b]
+Aug-17 20:50:47.960 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:47.960 [Task submitter] INFO  nextflow.Session - [f6/f372ce] Submitted process > grab_images (139)
+Aug-17 20:50:52.302 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 112; name: grab_images (112); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/84/72ac2b5e279cbb3d9ae03e960825f6]
+Aug-17 20:50:52.305 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:52.306 [Task submitter] INFO  nextflow.Session - [79/b4dc00] Submitted process > grab_images (141)
+Aug-17 20:50:52.684 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 130; name: grab_images (130); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/fa/09fda4511ddc95c637c3effcfa22b9]
+Aug-17 20:50:52.689 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:52.689 [Task submitter] INFO  nextflow.Session - [8f/ae3d74] Submitted process > grab_images (143)
+Aug-17 20:50:52.980 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 121; name: grab_images (121); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/ab/8faacc47a5e95956b2c0f960cd669c]
+Aug-17 20:50:52.983 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:52.983 [Task submitter] INFO  nextflow.Session - [6a/183fa1] Submitted process > grab_images (146)
+Aug-17 20:50:53.411 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 119; name: grab_images (119); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/60/afb783efafe58a91a720ce67e410b7]
+Aug-17 20:50:53.414 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:53.414 [Task submitter] INFO  nextflow.Session - [0b/1f8052] Submitted process > grab_images (131)
+Aug-17 20:50:54.771 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 122; name: grab_images (122); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/89/650d6463d9edccc50c6f9c7c55c66d]
+Aug-17 20:50:54.775 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:54.775 [Task submitter] INFO  nextflow.Session - [e7/7cfbf9] Submitted process > grab_images (132)
+Aug-17 20:50:56.132 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 114; name: grab_images (114); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/01/76d909adf838a84e083baed7fc0cfe]
+Aug-17 20:50:56.135 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:50:56.136 [Task submitter] INFO  nextflow.Session - [9b/56377a] Submitted process > grab_images (133)
+Aug-17 20:51:01.256 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 118; name: grab_images (118); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/05/ca1fe75c84edfca99446a5feb4b4cb]
+Aug-17 20:51:01.259 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:01.259 [Task submitter] INFO  nextflow.Session - [a2/0b4dcf] Submitted process > grab_images (136)
+Aug-17 20:51:03.590 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 124; name: grab_images (124); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9c/f046a6967545daf75bd0aea4f85aac]
+Aug-17 20:51:03.593 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:03.593 [Task submitter] INFO  nextflow.Session - [d4/f5c3a5] Submitted process > grab_images (135)
+Aug-17 20:51:04.802 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 137; name: grab_images (137); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f7/2b20cdb6983809eb2075d77428754c]
+Aug-17 20:51:04.805 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:04.805 [Task submitter] INFO  nextflow.Session - [68/2aa423] Submitted process > grab_images (134)
+Aug-17 20:51:14.802 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 123; name: grab_images (123); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/dd/16192728a56c7faf08ebe983f87637]
+Aug-17 20:51:14.805 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:14.806 [Task submitter] INFO  nextflow.Session - [5e/f57891] Submitted process > grab_images (140)
+Aug-17 20:51:15.431 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 125; name: grab_images (125); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/4c/b85a8b62b8678e6d81320239210dcb]
+Aug-17 20:51:15.437 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:15.438 [Task submitter] INFO  nextflow.Session - [26/6536cc] Submitted process > grab_images (142)
+Aug-17 20:51:19.084 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 143; name: grab_images (143); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/8f/ae3d7462ac4743adaa47ed370f62e5]
+Aug-17 20:51:19.088 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:19.088 [Task submitter] INFO  nextflow.Session - [33/e6688e] Submitted process > grab_images (145)
+Aug-17 20:51:25.869 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 129; name: grab_images (129); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9d/34f5a07aea29d41dee1cdd33447b99]
+Aug-17 20:51:25.879 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:25.879 [Task submitter] INFO  nextflow.Session - [94/3d336c] Submitted process > grab_images (144)
+Aug-17 20:51:26.240 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 126; name: grab_images (126); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/2b/d366eff3a46c6c870b27b280c19b86]
+Aug-17 20:51:26.243 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:26.244 [Task submitter] INFO  nextflow.Session - [9f/6126f9] Submitted process > grab_images (147)
+Aug-17 20:51:27.668 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 120; name: grab_images (120); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/3d/efb0e172aa691aebbabed707d7d5ed]
+Aug-17 20:51:27.671 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:27.671 [Task submitter] INFO  nextflow.Session - [de/881351] Submitted process > grab_images (159)
+Aug-17 20:51:29.216 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 138; name: grab_images (138); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/7c/a9d7619caf5979ecc42d10cf4a9b5e]
+Aug-17 20:51:29.219 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:29.220 [Task submitter] INFO  nextflow.Session - [a7/9c3211] Submitted process > grab_images (148)
+Aug-17 20:51:32.482 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 131; name: grab_images (131); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/0b/1f805299005a1fd6f4bc303d887ce9]
+Aug-17 20:51:32.485 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:32.485 [Task submitter] INFO  nextflow.Session - [b8/24546b] Submitted process > grab_images (149)
+Aug-17 20:51:33.477 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 139; name: grab_images (139); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/f6/f372ce6ee9be955df6792c69ce579c]
+Aug-17 20:51:33.480 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:33.480 [Task submitter] INFO  nextflow.Session - [2d/3cbe1b] Submitted process > grab_images (150)
+Aug-17 20:51:34.762 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 132; name: grab_images (132); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/e7/7cfbf9998584de394b15213a9acfde]
+Aug-17 20:51:34.766 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:34.766 [Task submitter] INFO  nextflow.Session - [6d/b1a364] Submitted process > grab_images (153)
+Aug-17 20:51:35.734 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 141; name: grab_images (141); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/79/b4dc009545cbef647b63c459145b82]
+Aug-17 20:51:35.736 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:35.736 [Task submitter] INFO  nextflow.Session - [71/e2f05f] Submitted process > grab_images (152)
+Aug-17 20:51:37.359 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 146; name: grab_images (146); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6a/183fa15dbb4d04ad5df766947d1534]
+Aug-17 20:51:37.363 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:37.364 [Task submitter] INFO  nextflow.Session - [82/9eb8a6] Submitted process > grab_images (154)
+Aug-17 20:51:39.055 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 133; name: grab_images (133); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9b/56377ae352805fd410fba6bf9a8477]
+Aug-17 20:51:39.057 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:39.057 [Task submitter] INFO  nextflow.Session - [0e/5ea3d2] Submitted process > grab_images (151)
+Aug-17 20:51:42.517 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 135; name: grab_images (135); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/d4/f5c3a5aae76fec27232e731c267239]
+Aug-17 20:51:42.519 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:42.519 [Task submitter] INFO  nextflow.Session - [c0/0b7404] Submitted process > grab_images (155)
+Aug-17 20:51:43.499 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 136; name: grab_images (136); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/a2/0b4dcf63ccd4f12cc8d86a9d518ca6]
+Aug-17 20:51:43.503 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:43.503 [Task submitter] INFO  nextflow.Session - [69/3cb747] Submitted process > grab_images (156)
+Aug-17 20:51:46.431 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 134; name: grab_images (134); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/68/2aa4239e07f9f8f0cf2314641af686]
+Aug-17 20:51:46.435 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:51:46.435 [Task submitter] INFO  nextflow.Session - [7f/8ce81a] Submitted process > grab_images (162)
+Aug-17 20:52:02.057 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 140; name: grab_images (140); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/5e/f5789189941354ac8efbbe08574014]
+Aug-17 20:52:02.060 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:02.060 [Task submitter] INFO  nextflow.Session - [60/77479a] Submitted process > grab_images (164)
+Aug-17 20:52:09.669 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 147; name: grab_images (147); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/9f/6126f9410f5854001e6be3bc8c22c5]
+Aug-17 20:52:09.672 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:09.672 [Task submitter] INFO  nextflow.Session - [64/ed1d2e] Submitted process > grab_images (157)
+Aug-17 20:52:12.159 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 148; name: grab_images (148); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/a7/9c32115470a0dd22a3eba9cff6188a]
+Aug-17 20:52:12.163 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:12.163 [Task submitter] INFO  nextflow.Session - [98/005b5a] Submitted process > grab_images (168)
+Aug-17 20:52:13.695 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 159; name: grab_images (159); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/de/88135143b9cbcdfefa892d533950a2]
+Aug-17 20:52:13.700 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:13.700 [Task submitter] INFO  nextflow.Session - [e1/fd1b0b] Submitted process > grab_images (158)
+Aug-17 20:52:14.707 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 156; name: grab_images (156); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/69/3cb747d80b9572e2b53bfa2df72bd7]
+Aug-17 20:52:14.708 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:14.709 [Task submitter] INFO  nextflow.Session - [99/bec40a] Submitted process > grab_images (174)
+Aug-17 20:52:14.770 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 145; name: grab_images (145); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/33/e6688e37c29599d97b8a15ac30472a]
+Aug-17 20:52:14.775 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:14.776 [Task submitter] INFO  nextflow.Session - [e4/9405e7] Submitted process > grab_images (165)
+Aug-17 20:52:15.118 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 150; name: grab_images (150); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/2d/3cbe1b9a98192aaae7e3ff60b6fccb]
+Aug-17 20:52:15.120 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:15.120 [Task submitter] INFO  nextflow.Session - [2d/b7e419] Submitted process > grab_images (160)
+Aug-17 20:52:18.205 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 142; name: grab_images (142); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/26/6536ccadd7828f3f2aa9c2cae19b0c]
+Aug-17 20:52:18.208 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:18.218 [Task submitter] INFO  nextflow.Session - [8b/721c6f] Submitted process > grab_images (5957)
+Aug-17 20:52:19.250 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 151; name: grab_images (151); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/0e/5ea3d274f82b13e6453511dde8773e]
+Aug-17 20:52:19.253 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:19.253 [Task submitter] INFO  nextflow.Session - [3b/472213] Submitted process > grab_images (179)
+Aug-17 20:52:20.076 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 149; name: grab_images (149); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/b8/24546b04081758ecf727eb7429d02a]
+Aug-17 20:52:20.079 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:20.079 [Task submitter] INFO  nextflow.Session - [26/8192bb] Submitted process > grab_images (180)
+Aug-17 20:52:20.216 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 144; name: grab_images (144); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/94/3d336caf3f1cf9a46000d3343f0c2d]
+Aug-17 20:52:20.219 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:20.219 [Task submitter] INFO  nextflow.Session - [ac/835355] Submitted process > grab_images (161)
+Aug-17 20:52:24.072 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 153; name: grab_images (153); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/6d/b1a364aae962a56362253dd74ccd15]
+Aug-17 20:52:24.075 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:24.075 [Task submitter] INFO  nextflow.Session - [83/744307] Submitted process > grab_images (182)
+Aug-17 20:52:25.940 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 152; name: grab_images (152); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/71/e2f05f6aae12208b5cf6cf00755716]
+Aug-17 20:52:25.943 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:25.943 [Task submitter] INFO  nextflow.Session - [b2/0d3523] Submitted process > grab_images (163)
+Aug-17 20:52:32.793 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 154; name: grab_images (154); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/82/9eb8a6e0eb8564f92fe44118a3c98c]
+Aug-17 20:52:32.795 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:32.795 [Task submitter] INFO  nextflow.Session - [38/452bda] Submitted process > grab_images (166)
+Aug-17 20:52:35.960 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 155; name: grab_images (155); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/c0/0b74043f53a8ed45ad899c965a394d]
+Aug-17 20:52:35.964 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:35.964 [Task submitter] INFO  nextflow.Session - [6e/308100] Submitted process > grab_images (167)
+Aug-17 20:52:43.662 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 162; name: grab_images (162); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/7f/8ce81af10ae6176436553ce67cf4b2]
+Aug-17 20:52:43.665 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:43.665 [Task submitter] INFO  nextflow.Session - [60/8aba65] Submitted process > grab_images (170)
+Aug-17 20:52:53.933 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 168; name: grab_images (168); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/98/005b5a3cb92fbfac646890902aca4a]
+Aug-17 20:52:53.937 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:53.937 [Task submitter] INFO  nextflow.Session - [3e/f1f220] Submitted process > grab_images (169)
+Aug-17 20:52:55.251 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 158; name: grab_images (158); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/e1/fd1b0bdd6d6b0669e13f972eab9773]
+Aug-17 20:52:55.254 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:55.254 [Task submitter] INFO  nextflow.Session - [18/38b820] Submitted process > grab_images (171)
+Aug-17 20:52:56.042 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 160; name: grab_images (160); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/2d/b7e4199b19690520ed5b0fbc100a70]
+Aug-17 20:52:56.045 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:56.046 [Task submitter] INFO  nextflow.Session - [39/c0dc54] Submitted process > grab_images (172)
+Aug-17 20:52:56.411 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 164; name: grab_images (164); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/60/77479ae12b522a98e55e62d6c02951]
+Aug-17 20:52:56.413 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:56.413 [Task submitter] INFO  nextflow.Session - [9e/409d48] Submitted process > grab_images (173)
+Aug-17 20:52:58.324 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 165; name: grab_images (165); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/e4/9405e780d871fcdde516ae28c571a0]
+Aug-17 20:52:58.327 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:52:58.328 [Task submitter] INFO  nextflow.Session - [88/3c6177] Submitted process > grab_images (175)
+Aug-17 20:53:00.033 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 179; name: grab_images (179); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/3b/472213a59117b79a17027b07b88efe]
+Aug-17 20:53:00.038 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:53:00.038 [Task submitter] INFO  nextflow.Session - [1c/280615] Submitted process > grab_images (176)
+Aug-17 20:53:02.626 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 174; name: grab_images (174); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/99/bec40a84f71f4b47cc40123dae8f6f]
+Aug-17 20:53:02.628 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:53:02.628 [Task submitter] INFO  nextflow.Session - [65/d74ebe] Submitted process > grab_images (177)
+Aug-17 20:53:03.760 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 180; name: grab_images (180); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/26/8192bb07742849a586a1a641debebc]
+Aug-17 20:53:03.763 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:53:03.763 [Task submitter] INFO  nextflow.Session - [51/8b1375] Submitted process > grab_images (178)
+Aug-17 20:53:08.011 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 182; name: grab_images (182); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/83/7443078facd18b0dde1a6e12f61f53]
+Aug-17 20:53:08.013 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:53:08.013 [Task submitter] INFO  nextflow.Session - [d9/3318e3] Submitted process > grab_images (181)
+Aug-17 20:53:09.141 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5957; name: grab_images (5957); status: COMPLETED; exit: 0; error: -; workDir: /home/magnapress/magnapress/work/8b/721c6f624e784a39d720772f5f09b3]
+Aug-17 20:53:09.143 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:53:09.143 [Task submitter] INFO  nextflow.Session - [96/732220] Submitted process > grab_images (183)
+Aug-17 20:53:10.891 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 170; name: grab_images (170); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/60/8aba655d3829e79747b559284a9973]
+Aug-17 20:53:10.895 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Aug-17 20:53:10.895 [Task submitter] INFO  nextflow.Session - [98/9393f4] Submitted process > grab_images (185)
+Aug-17 20:53:10.899 [SIGINT handler] DEBUG nextflow.Session - Session aborted -- Cause: SIGINT
+Aug-17 20:53:10.948 [main] DEBUG nextflow.Session - Session await > all process finished
+Aug-17 20:53:10.948 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Aug-17 20:53:10.953 [main] WARN  n.processor.TaskPollingMonitor - Killing pending tasks (16)
+Aug-17 20:53:10.980 [Task monitor] ERROR nextflow.processor.TaskProcessor - Error executing process > 'grab_images (170)'
+
+Caused by:
+  Process `grab_images (170)` terminated with an error exit status (130)
+
+Command executed:
+
+  python3 --version
+  echo 'processing image-1097-00\:00\:58.732-248.npy'
+  python3 /home/magnapress/magnapress/k_means2.py image-1097-00\:00\:58.732-248.npy /home/magnapress/magnapress
+
+Command exit status:
+  130
+
+Command output:
+  Python 3.7.3
+  processing image-1097-00\:00\:58.732-248.npy
+
+Command wrapper:
+  Python 3.7.3
+  processing image-1097-00\:00\:58.732-248.npy
+
+Work dir:
+  /home/magnapress/magnapress/work/60/8aba655d3829e79747b559284a9973
+
+Tip: when you have fixed the problem you can continue the execution adding the option `-resume` to the run command line
+Aug-17 20:53:10.983 [main] DEBUG nextflow.executor.LocalTaskHandler - Unable to kill grab_images (157) -- command: kill -TERM 12713; exit: 1 
+ bash: line 0: kill: (12713) - No such process
+
+Aug-17 20:53:10.995 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 169; name: grab_images (169); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/3e/f1f220199c324ee0471b6c427c9606]
+Aug-17 20:53:10.996 [main] DEBUG nextflow.executor.LocalTaskHandler - Unable to kill grab_images (161) -- command: kill -TERM 13133; exit: 1 
+ bash: line 0: kill: (13133) - No such process
+
+Aug-17 20:53:10.997 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 171; name: grab_images (171); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/18/38b820ac012a0b3f278d01ceca52ce]
+Aug-17 20:53:11.002 [main] DEBUG nextflow.executor.LocalTaskHandler - Unable to kill grab_images (163) -- command: kill -TERM 13265; exit: 1 
+ bash: line 0: kill: (13265) - No such process
+
+Aug-17 20:53:11.003 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 172; name: grab_images (172); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/39/c0dc5478af82104e8d23d7bbede185]
+Aug-17 20:53:11.008 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 173; name: grab_images (173); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/9e/409d4878cfd972be824c40ec165173]
+Aug-17 20:53:11.013 [main] DEBUG nextflow.executor.LocalTaskHandler - Unable to kill grab_images (166) -- command: kill -TERM 13315; exit: 1 
+ bash: line 0: kill: (13315) - No such process
+
+Aug-17 20:53:11.018 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 175; name: grab_images (175); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/88/3c617779b3f799a524edfd6f73a3bc]
+Aug-17 20:53:11.021 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 176; name: grab_images (176); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/1c/280615a2ed7352d71edc3f3e1e67f5]
+Aug-17 20:53:11.022 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 177; name: grab_images (177); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/65/d74ebed7870ad242344a69cdb6b9f2]
+Aug-17 20:53:11.023 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 178; name: grab_images (178); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/51/8b13751f9fe6fef0af84ff8960e16d]
+Aug-17 20:53:11.023 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 181; name: grab_images (181); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/d9/3318e3f156a6238c95585cfc0af893]
+Aug-17 20:53:11.024 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 183; name: grab_images (183); status: COMPLETED; exit: 130; error: -; workDir: /home/magnapress/magnapress/work/96/7322200fd1955637ff2725fe86c253]
+Aug-17 20:53:11.026 [main] DEBUG nextflow.executor.LocalTaskHandler - Unable to kill grab_images (167) -- command: kill -TERM 13367; exit: 1 
+ bash: line 0: kill: (13367) - No such process
+
+Aug-17 20:53:11.029 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=175; failedCount=11; ignoredCount=0; cachedCount=0; pendingCount=9604; submittedCount=1; runningCount=-1; retriesCount=0; abortedCount=6; succeedDuration=2h 12m 35s; failedDuration=2m 13s; cachedDuration=0ms;loadCpus=-1; loadMemory=0; peakRunning=16; peakCpus=16; peakMemory=0; ]
+Aug-17 20:53:11.104 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Aug-17 20:53:11.113 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

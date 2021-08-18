@@ -1,0 +1,490 @@
+from pypylon import pylon
+import cv2
+import sys
+import numpy as np
+from scipy.interpolate import interp2d
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QImage, QPixmap
+from freespin import Ui_FreeSpin
+from PyQt5.QtWidgets import QApplication
+import asyncio 
+import inspect
+from PyQt5.QtCore import QRect
+from time import sleep 
+import math
+import csv
+
+class Visualize_Sample():
+    
+    camera = None    
+    calibration = True
+    top_left_corner = (0,0)
+    width_and_height = (100,100)
+    threshold_low = 0
+    threshold_high = 255
+    final_dark_tol = 1
+    final_index_pad = 1
+    final_bottom_trim = 2
+    capture_profile = False
+    image_stream = None
+    final_canny_max = 0 
+    final_canny_min = 0   
+    width = 0
+    height = 0
+    line1 = None 
+    line2 = None 
+    data_file = None
+    writer = None
+    orig_height = 1 
+    kernel_size = 1  
+    horizontal_black = None
+    horizontal_white = None 
+    vertical_black = None 
+    vertical_white = None 
+    width_padding = None 
+    height_padding = None 
+    orig_profile = None
+    orig_sample_height = None 
+    orig_sample_top = None 
+    orig_bottom_platen = None 
+    orig_top_platen = None 
+    orig_crop_top = None
+    orig_left = None 
+    offset = None 
+    image_counter = 0 
+    image_width = 0
+    image_height = 0 
+
+
+    def __init__(self):
+        #super(Visualize_Sample,self).__init__(parent.ui)
+        self.init_camera()
+
+    def find_peaks(self,vals,zeros,fraction_black,fraction_white):
+    
+        white_shift = np.max(vals)*fraction_white
+        black_shift = np.min(vals)*fraction_black
+        current_index = 0 
+        offset = 0 
+        shrink = 0 
+        peaks = []
+        while True:
+            vals = vals[shrink:]
+            direction = 1
+            #print(f'next whiteshift= { np.argmax(vals > white_shift)} next bkaj shift {np.argmax(vals <  black_shift)}')
+            if (np.argmax(vals > white_shift) < np.argmax(vals <  black_shift)):
+                temp = np.argmax(vals > white_shift)
+                if (temp != 0): 
+                    current_index = np.argmax(vals > white_shift)
+                    direction = 1
+                else:
+                    current_index = np.argmax(vals < black_shift)
+                    direction = -1 
+            else:
+                temp = np.argmax(vals < black_shift)
+                if (temp != 0): 
+                    current_index = np.argmax(vals < black_shift)
+                    direction = -1
+                else:
+                    current_index = np.argmax(vals > white_shift)
+                    dreiction = 1
+            #print(f'current index is ={current_index}')
+            if (current_index != 0):
+                peaks.append((offset + current_index)*direction)
+            shrink = zeros[np.argmax(zeros > current_index+offset)] - offset
+            if (shrink == 0 or current_index == 0): 
+                return peaks
+            offset += shrink
+            #print(f'advance current_index to = {offset}')
+
+            if (np.argmax(vals > white_shift) == np.argmax(vals <  black_shift)):
+                break
+        return peaks
+
+    async def get_profile(self):
+        self.capture_profile = True
+        await asyncio.sleep(0.0001)
+        self.image_stream.cancel()
+        self.camera.StopGrabbing()
+
+    def label_image(self,image,label,position,color):
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        # fontScale
+        fontScale = 1
+        # Blue color in BGR
+        color = (255, 255, 0)
+        # Line thickness of 2 px
+        thickness = 7
+        labelled_image = cv2.putText(image,label, position, font,fontScale, color, thickness, cv2.LINE_AA)
+        return labelled_image 
+
+
+    async def stop_run(self):
+        self.camera.StopGrabbing()
+        self.image_stream.cancel()
+
+    def Threshold_Image(self,img,calibration):
+        print('Step A')
+        self.image_height, self.image_width = img.shape[:2]
+        print('Step B')
+        if (calibration):
+            self.kernel_size = 2*int(self.parent.ui.sld_KERNEL_SIZE.value())+1
+        print('Step C')
+        img = cv2.GaussianBlur(img,(self.kernel_size,self.kernel_size),cv2.BORDER_DEFAULT)
+        print('Step D')
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        print('Step G')
+        _, thresh = cv2.threshold(gray,0, 255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        print('Step H')
+        return thresh
+    
+    def Identify_Heights(self,img,calibration):
+        print('Step A')
+        print('calculating sum rows')
+        sum_rows = img.sum(axis=1)
+        print('Step B')
+        rows_diff = np.gradient(sum_rows,1)
+        print('Step C')
+        rows_diff_zeros = np.nonzero(rows_diff == 0)[0]
+        print('Step D')
+        if (calibration):
+            self.vertical_black = float(self.parent.ui.sld_VERTICAL_BLACK.value()/100)
+            self.vertical_white = float(self.parent.ui.sld_VERTICAL_WHITE.value()/100)
+        print('Step F')
+        try:
+            print('finding peaks y')
+            y_boundaries = self.find_peaks(rows_diff,rows_diff_zeros,self.vertical_black,self.vertical_white)
+            print(y_boundaries)
+        except:
+            return 0,0,3000,0,0
+        print('Step G')
+        y_sample_top = 0
+        y_top_platen = 0
+        y_sample_top = 0 
+        y_bottom_platen = 0 
+        crop_top = 0 
+        height_padding = 0 
+        for i in range(0,len(y_boundaries)):
+            if (y_boundaries[i] < 0 ):
+                y_top_platen = abs(y_boundaries[i-1])
+                if (i < len(y_boundaries)-1 and y_boundaries[i+1] < 0):
+                    y_sample_top = abs(y_boundaries[i])
+                    y_bottom_platen = abs(y_boundaries[i+1])
+                    crop_top = int((y_sample_top + y_top_platen)/2)
+                    height_padding = int((y_bottom_platen - y_top_platen)*0.25)
+                else:    
+                    y_bottom_platen = abs(y_boundaries[i])
+                    crop_top = y_top_platen
+                    height_padding = int((y_bottom_platen - y_top_platen)*0.25)
+                break
+            else:
+                continue 
+        print('Step H')
+        return y_top_platen, y_sample_top, y_bottom_platen, crop_top, height_padding
+
+    def Identify_Widths(self,img,calibration,top_platen,sample_top,bottom_platen,crop_top):
+        print('Step A')
+        thresh_cropped = img[crop_top:bottom_platen,0:self.image_width]
+        print('Step B')
+        print('calculating sum cols')
+        sum_cols = thresh_cropped.sum(axis=0)
+        
+        print('Step C')
+        cols_diff = np.gradient(sum_cols,1)
+        print('Step D')
+        cols_diff_zeros = np.nonzero(cols_diff == 0)[0]
+        print('Step E')
+        if (calibration):
+            self.horizontal_black = float(self.parent.ui.sld_HORIZONTAL_BLACK.value()/100)
+            self.horizontal_white = float(self.parent.ui.sld_HORIZONTAL_WHITE.value()/100)
+        print('Step G')
+        try:
+            print('finding peaks x')
+            x_boundaries = self.find_peaks(cols_diff,cols_diff_zeros,self.horizontal_black,self.horizontal_white)
+        except:
+            return 1,4023,0
+        print('Step H')
+        if (len(x_boundaries) < 2):
+            return 1,4023,0
+        print('Step I')
+        x_boundaries = [ x * -1 for x in x_boundaries]
+        print('Step J')
+        left_boundary = abs(x_boundaries[0])
+        print('Step K')
+        right_boundary = abs(x_boundaries[1])
+        print('Step L')
+        width_padding = int((right_boundary - left_boundary)*0.25)
+        print('Step M')
+        if (left_boundary - width_padding < 1):
+            left_boundary = width_padding + 1 
+        if (right_boundary + width_padding > 4024):
+            right_boundary = self.image_width - width_padding -1
+        print('Step N')
+        return left_boundary, right_boundary, width_padding
+
+    async def Annotate_Image(self,img,calibration,left,right,width_padding,top_platen,sample_top,bottom_platen,crop_top,height_padding): 
+        print('Step A')
+        #final_crop = img[crop_top:bottom_platen,left-width_padding:right+width_padding]
+        print('Step B')
+        #img_canny = cv2.Canny(final_crop, 50,100)
+        if (calibration):
+            self.threshold_high = int(self.parent.ui.sld_THRESHOLD_HL.value())
+            self.threshold_low = int(self.parent.ui.sld_THRESHOLD_LL.value())
+        print('Step C')
+        #contours, _ = cv2.findContours(img_canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        print('Step D')
+        if (calibration):      
+            p0 = img
+        else: 
+            p0 = img.copy()
+        print('Step E')
+        cv2.line(p0, (left, top_platen), (right, top_platen), (153, 204, 255), 5)
+        print('Step F')
+        cv2.line(p0, (left, bottom_platen), (right, bottom_platen), (153, 204, 255), 5)
+        print('Step G')
+        if (sample_top != 0):
+            cv2.line(p0, (left, sample_top), (right, sample_top), (255, 0, 160), 5)
+        print('Step H')
+        #cv2.drawContours(p0, contours, -1, (0, 0, 255), 2, offset = (left-width_padding,crop_top))
+        print('Step I')
+        if (calibration):
+            p0 = p0[crop_top-height_padding:bottom_platen,left-width_padding:right+width_padding]
+        else:
+            print('Step I-1')
+            img = img[self.orig_crop_top-self.height_padding:self.orig_bottom_platen+self.height_padding,self.orig_left-self.width_padding:self.orig_right+self.width_padding]
+            print('Step I-2')
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            print('Step I-3')
+        print('Step J')
+        if (self.capture_profile):
+            self.orig_crop_top = crop_top
+            self.orig_sample_top = sample_top
+            self.orig_bottom_platen = bottom_platen
+            self.orig_top_platen = top_platen
+            self.orig_sample_height = bottom_platen - sample_top
+            self.orig_left = left
+            self.orig_right = right 
+            self.width_padding = width_padding
+            self.height_padding = height_padding
+            self.capture_profile = False
+        print('Step K')
+        return p0,img
+
+    async def Overlay_Original_Data(self,img,left,right,width_padding,top_platen,sample_top,bottom_platen,crop_top,height_padding):
+        print('Step A')
+        cv2.drawContours(img, self.orig_profile, -1, (0,255,255), 2, offset = (self.orig_left-self.width_padding,self.orig_crop_top))
+        print('Step B')
+        cv2.line(img, (left, self.orig_sample_top), (right, self.orig_sample_top), (0,255, 255), 3)
+        print('Step C')
+        cv2.line(img, (left, self.orig_bottom_platen), (right, self.orig_bottom_platen), (0,255, 255), 3)
+        print('Step D')
+        img = img[self.orig_crop_top-self.height_padding:self.orig_bottom_platen+self.height_padding,self.orig_left-self.width_padding:self.orig_right+self.width_padding]
+        print('Step E')
+        if (sample_top > self.orig_sample_top):
+            new_height = bottom_platen - sample_top 
+        else:
+            if (top_platen > self.orig_sample_top):
+                new_height = bottom_platen - top_platen
+            else:
+                new_height = bottom_platen - self.orig_sample_top
+        print('Step F')
+        strain = float (100 - new_height/self.orig_sample_height*100)
+        print('Step G')
+        self.Emit_Strain(strain)
+        await asyncio.sleep(0)
+        print('Step H')
+        print('Step J')
+        time,timestamp,force,position = self.parent.Emit_Data()
+        print('Step K')
+        image_label =f'Time={timestamp} Strain={str(round(strain,2))}%' 
+        print('Step L')
+        h,w = img.shape[:2]
+        print('Step M')
+        img = self.label_image(img,image_label,(int(w/8),int(h*3/4)),(0,255,255))
+        print('Step N')
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        print('Step Q')
+        return img, strain
+
+    def Update_GUI_Labels(self,top_platen,sample_top,bottom_platen):
+        print('Step A')
+        self.parent.ui.lb_PLATEN_to_PLATEN.setText(str(bottom_platen-top_platen))
+        print('Step B')
+        self.parent.ui.lb_PLATEN_to_SAMPLE.setText(str(sample_top-top_platen))
+        print('Step C')
+        self.parent.ui.lb_SAMPLE_to_BOTTOM_PLATEN.setText(str(int(bottom_platen)-int(sample_top)))
+        print('Step D')
+        self.parent.ui.lb_SAMPLE_TOP_to_ORIGINAL_SAMPLE_TOP.setText(str(int(sample_top)-int(self.orig_sample_top)))
+        print('Step E')
+        self.parent.ui.lb_ORIGINALSAMPLE_to_BOTTOM_PLATEN.setText(str(int(self.orig_bottom_platen)-int(self.orig_sample_top)))
+        print('Step f')
+
+    def Emit_Strain(self, val):
+        self.parent.current_strain = val
+
+    def init_camera(self):
+        serial_number = '23437639'
+        info = None 
+
+    async def calibrate_aquisition(self,img):
+        print('calibrate aquisition')
+        p0 = img
+        print('step 1')
+        p1 = self.Threshold_Image(p0,True) 
+        await asyncio.sleep( 0 )
+        print('step 2')
+        y_top_platen, y_sample_top, y_bottom_platen,y_crop_top,height_padding = self.Identify_Heights(p0,True) 
+        await asyncio.sleep( 0 )
+        print('step 3')
+        x_left_edge, x_right_edge, width_padding  = self.Identify_Widths(p0,True,y_top_platen,y_sample_top,y_bottom_platen,y_crop_top)
+        await asyncio.sleep( 0 )
+        p2 = p0
+        print('step 4')
+        p2,p_raw = await self.Annotate_Image(p2,True,x_left_edge,x_right_edge,width_padding,y_top_platen,y_sample_top,y_bottom_platen,y_crop_top,height_padding) 
+        await asyncio.sleep( 0 )
+        print('step 5')
+        p0 = cv2.cvtColor(p0, cv2.COLOR_BGR2RGB)
+        print('step 6')
+        try: 
+            p2 = cv2.cvtColor(p2, cv2.COLOR_BGR2RGB)
+        except:
+            p2 = np.zeros((self.image_height,self.image_width,3), np.uint8)
+        finally:
+            print('step 7')
+            return p0, p1 , p2
+
+    async def process_image(self,img):
+        print('proces images')
+        p0 = img.copy()
+        print('step 1')
+        p1 = self.Threshold_Image(p0,False) 
+        await asyncio.sleep( 0 )
+        print('step 2')
+        y_top_platen, y_sample_top, y_bottom_platen,y_crop_top,height_padding = self.Identify_Heights(p1,False) 
+        await asyncio.sleep( 0 )
+        print('step 3')
+        x_left_edge, x_right_edge, width_padding = self.Identify_Widths(p1,False,y_top_platen,y_sample_top,y_bottom_platen,y_crop_top)
+        await asyncio.sleep( 0 )
+        print('step 4')
+        p0, p_raw = await self.Annotate_Image(p0,False,x_left_edge,x_right_edge,width_padding,y_top_platen,y_sample_top,y_bottom_platen,y_crop_top,height_padding) 
+        await asyncio.sleep( 0 )
+        print('step 5')
+        p0, strain = await self.Overlay_Original_Data(p0,x_left_edge,x_right_edge,width_padding,y_top_platen,y_sample_top,y_bottom_platen,y_crop_top,height_padding) 
+        await asyncio.sleep( 0 )
+        print('ste 5a')
+        self.Update_GUI_Labels(y_top_platen,y_sample_top,y_bottom_platen)
+        await asyncio.sleep( 0 )
+        print('step 6')
+        self.image_counter += 1
+        print('step 7')
+        time,timestamp,force,position = self.parent.Emit_Data()
+        print('step 8')
+        data = [str(timestamp),str(time),str(force),str(position),str(strain),str(y_top_platen),str(y_sample_top),str(y_bottom_platen),str(self.orig_top_platen),str(self.orig_sample_top),str(self.orig_bottom_platen)]
+        print('step 9')
+        filename = f'./images/image-{self.image_counter}.tiff'
+        filename_raw = f'./images/image-{self.image_counter}-raw.tiff'
+        print('step 10')
+        cv2.imwrite(filename,p0)
+        cv2.imwrite(filename_raw,p_raw)
+        await asyncio.sleep( 0 )
+        print('step 11')
+        self.writer.writerow(data)
+        await asyncio.sleep( 0 )
+        print('step 12')
+        return p0
+
+    def Emit_Strain(self, val):
+        self.parent.current_strain = val
+
+    def init_camera(self):
+        serial_number = '23437639'
+        info = None 
+        for i in pylon.TlFactory.GetInstance().EnumerateDevices():
+            if i.GetSerialNumber() == serial_number:
+                info = i 
+                break  
+        else:
+            print('Camera with {} serial number not found '.format(serial_number))
+        if info is not None:
+            self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateDevice(info))
+            self.camera.Open()
+        
+        self.converter = pylon.ImageFormatConverter()
+        # converting to opencv bgr format
+        self.converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+        self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+
+    async def grabbing_image(self):
+        while self.camera.IsGrabbing():
+            grabResult = self.camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+            if grabResult.GrabSucceeded():             
+                img = self.converter.Convert(grabResult)
+                img = img.GetArray()
+                h, w, ch  = img.shape
+                if (self.calibration):
+                    original_img, threshold_img, final_img = await self.calibrate_aquisition(img)
+                    bytesPerLine = ch*w
+                    original_QT = QImage(original_img.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                    bytesPerLine = w
+                    threshold_QT = QImage(threshold_img.data, w, h, bytesPerLine, QImage.Format_Grayscale8)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (original_QT.isNull()):
+                        p0 = original_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.original_image.setPixmap(QPixmap.fromImage(p0))
+                    if not (threshold_QT.isNull()):
+                        p1 = threshold_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.threshold_image.setPixmap(QPixmap.fromImage(p1))
+                    if not (final_QT.isNull()):
+                        p2 = final_QT.scaled(480,480, Qt.KeepAspectRatio)
+                        self.parent.ui.final_image.setPixmap(QPixmap.fromImage(p2))
+                else:
+                    final_img = await self.process_image(img)
+                    cropped_h,cropped_w, ch = final_img.shape
+                    bytesPerLine = cropped_w*ch
+                    final_QT = QImage(final_img.data, cropped_w, cropped_h, bytesPerLine, QImage.Format_RGB888)
+                    if not (final_QT.isNull()):
+                        p0 = final_QT.scaled(480, 480, Qt.KeepAspectRatio)  
+                        self.parent.ui.camera_image.setPixmap(QPixmap.fromImage(p0))
+            await asyncio.sleep(0)
+
+    async def aquire_images(self,calibration,calling_window):
+        self.parent = calling_window
+        # Grabing Continusely (video) with minimal delay
+        self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+        if (calibration):
+            self.calibration = True 
+        else:
+            self.calibration = False
+            self.data_file = open('run_data.csv', 'w',newline='')
+            self.writer = csv.writer(self.data_file)
+            header = ['timestamp','time_s', 'force_g','position', 'strain','top_platen','sample_top','bottom_platen','orig_top_platen','orig_sample_top','orig_bottom_platen']
+            self.writer.writerow(header)
+
+        print('trying out emit data')
+        self.image_stream = asyncio.create_task(self.grabbing_image()) 
+
+    def find_nearest_index(self,center,points):
+        distance = np.array(list(map(abs,(points[:,0] - center))))
+        index = np.argmin(distance,axis = 0)
+        rows = points.shape[0]
+        value = points[index][:]
+        return np.reshape(np.delete(points,[index*2,index*2+1]),(rows-1,2)),value
+
+    def remove_bottom_node(self,contour):
+        if (contour != []):
+            index = np.argmax(contour,axis = 0)[1]
+            rows = contour.shape[0]
+            
+            return np.reshape(np.delete(contour,[index*2,index*2+1]),(rows-1,2))
+        else:
+            return contour  
+
+    def get_vertical_distance(self,contour):
+        high_val = contour[np.argmax(contour,axis=0)[1],1]
+        low_val = contour[np.argmin(contour,axis=0)[1],1]
+        return high_val - low_val
+
+
