@@ -1,0 +1,113 @@
+#include <stdint.h>
+#include "pru_uart.h"
+#include "pru_ecap.h" 
+ 
+// encoder position in other PRU core's memory
+#define position_var ((uint32_t const volatile *)0x00002000)
+ 
+ 
+struct Timestamp {
+    uint32_t s;
+    uint32_t ns;
+};
+ 
+struct Timestamp timestamp()
+{
+    static struct Timestamp now = {};
+    uint32_t ns = CT_ECAP.TSCTR * 5;
+    if( ns < now.ns )
+        ++now.s;
+    now.ns = ns;
+    return now;
+}
+ 
+ 
+struct SharedVars {
+    struct Timestamp time; 
+    uint32_t position;
+    uint32_t force;
+    uint8_t duty_cycle;
+    uint8_t wave_form;
+};
+ 
+far struct SharedVars volatile shared_vars __attribute__((location(0x10000)));
+ 
+ 
+// receive byte from uart
+static inline char uart_recv_byte()
+{
+    for(;;) {
+        uint8_t lsr = CT_UART.LSR;
+        if( lsr & 0x1e )
+            __halt();  // receive-error occurred
+        if( lsr & 0x01 )
+            return (char) CT_UART.RBR;
+    }
+}
+ 
+// receive CR-terminated line from uart
+static inline uint8_t uart_recv_line( char volatile msg[], uint8_t maxlen )
+{
+    uint8_t len = 0;
+ 
+    for(;;) {
+        char c = uart_recv_byte();
+        if( c == '\r' )
+            break;  // found end of line
+        if( len == maxlen )
+            __halt();  // line does not fit in buffer
+        msg[ len++ ] = c;
+    }
+ 
+    return len;
+}
+ 
+// receive and parse measurement message from load cell
+uint32_t receive_measurement()
+{
+    // allocate buffer at fixed address for debugging convenience
+    static char volatile msg[8] __attribute__((location(0x1f00)));
+ 
+    // receive line from uart
+    uint8_t len = uart_recv_line( msg, sizeof msg );
+ 
+    // verify length and prefix
+    if( len != 8 || msg[0] != 'N' )
+        __halt();
+ 
+    // parse the remainder as integer
+    uint32_t value = 0;
+    uint8_t i;
+    for( i = 2; i < len; i++ ) {
+        if( msg[i] < '0' || msg[i] > '9' )
+            __halt();
+        value = value * 10 + ( msg[i] - '0' );
+    }
+ 
+    return value;
+}
+ 
+ 
+ 
+void main()
+{
+    CT_UART.THR = 'S';
+    CT_UART.THR = 'N';
+    CT_UART.THR = '\r';
+ 
+    for(;;) {
+        // parse and interpret message from load cell
+        uint32_t force = receive_measurement();
+ 
+        // get time measurement
+        struct Timestamp ts = timestamp();
+ 
+        // update sharedVars for GUI access
+        shared_vars.position = *position_var;
+        //shared_vars.force = force;
+        shared_vars.time.ns = ts.ns;
+        shared_vars.time.s = ts.s;
+        shared_vars.duty_cycle = 0;
+        shared_vars.wave_form = 0;
+    }
+}

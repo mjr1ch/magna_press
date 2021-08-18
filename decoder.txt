@@ -1,0 +1,138 @@
+Source File 1 : 'decoder.pasm' (32 Instructions Generated)
+
+    1 :                   : #include "common.h"
+    2 :                   :  
+    3 :                   :  #define counter r10
+    4 :                   :  #define pin_A   r31.t2
+    5 :                   :  #define pin_B   r31.t16
+    6 :                   :  
+    7 :                   :  .macro increment
+    8 :                   :      add     counter, counter, 1
+    9 :                   :      sbco    &counter, c24, 0, 4     // store counter to memory
+   10 :                   :  .endm
+   11 :                   :  
+   12 :                   :  .macro decrement
+   13 :                   :      sub     counter, counter, 1
+   14 :                   :      sbco    &counter, c24, 0, 4     // store counter to memory
+   15 :                   :  .endm
+   16 :                   :  
+   17 :                   :  
+   18 : 0x0000 0x240000ea :      mov     counter, 0
+   19 : 0x0001 0x8100388a :      sbco    &counter, c24, 0, 4     // store initial counter to memory
+   20 :                   :  
+   21 :                   :  // jump into right place of the loop based on initial state of A
+   22 : 0x0002 0xd102ff12 :      bbs     Ahigh,    pin_A
+   23 : 0x0003 0x21000600 :      jmp     Alow
+   24 :                   :  
+   25 :                   :  A0_Bfall:
+   26 : 0x0004 0x0101eaea :      increment                       // B falling edge with A low
+      : 0x0005 0x8100388a : 
+   27 :                   :  
+   28 :                   :  Alow:
+   29 : 0x0006 0xc902ff00 :      wbs     pin_A                   // A is low, wait for A rise
+   30 : 0x0007 0xd110ff12 :      bbs     Arise_B1, pin_B         // A rising edge, check B
+   31 :                   :  
+   32 : 0x0008 0x0101eaea :      increment                       // A rising edge with B low
+      : 0x0009 0x8100388a : 
+   33 : 0x000a 0x21000d00 :      jmp     Blow
+   34 :                   :  
+   35 :                   :  
+   36 :                   :  Afall_B0:
+   37 : 0x000b 0x0501eaea :      decrement                       // A falling edge with B low
+      : 0x000c 0x8100388a : 
+   38 :                   :  
+   39 :                   :  Blow:
+   40 : 0x000d 0xc910ff00 :      wbs     pin_B                   // B is low, wait for B rise
+   41 : 0x000e 0xd102ff04 :      bbs     A1_Brise, pin_A         // B rising edge, check A
+   42 :                   :  
+   43 :                   :  
+   44 : 0x000f 0x0501eaea :      decrement                       // B rising edge with A low
+      : 0x0010 0x8100388a : 
+   45 : 0x0011 0x21000600 :      jmp     Alow
+   46 :                   :  
+   47 :                   :  A1_Brise:
+   48 : 0x0012 0x0101eaea :      increment                       // B rising edge with A high
+      : 0x0013 0x8100388a : 
+   49 :                   :  
+   50 :                   :  Ahigh:
+   51 : 0x0014 0xd102ff00 :      wbc     pin_A                   // A is high, wait for A fall
+   52 : 0x0015 0xcf10fff6 :      bbc     Afall_B0, pin_B         // A falling edge, check B
+   53 :                   :  
+   54 : 0x0016 0x0101eaea :      increment                       // A falling edge with B high             
+      : 0x0017 0x8100388a : 
+   55 : 0x0018 0x21001b00 :      jmp     Bhigh 
+   56 :                   :                                                               
+   57 :                   :  Arise_B1: 
+   58 : 0x0019 0x0501eaea :      decrement                       // A rising edge wit 
+      : 0x001a 0x8100388a : 
+   59 :                   :       
+   60 :                   :  Bhigh:   
+   61 : 0x001b 0xd110ff00 :      wbc     pin_B                   // B is high, wait for B fall 
+   62 : 0x001c 0xcf02ffe8 :      bbc     A0_Bfall, pin_A         // B falling edge, check A 
+   63 :                   :                                                                       
+   64 : 0x001d 0x0501eaea :      decrement                       // B falling edge with A high 
+      : 0x001e 0x8100388a : 
+   65 : 0x001f 0x21001400 :      jmp     Ahigh
+   66 :                   : 
+   67 :                   : 
+
+Source File 2 : 'common.h' (No Output Generated)
+
+    1 :                   : // vim: ft=asm
+    2 :                   : 
+    3 :                   : // Change link register to something other than the pasm default (r30).
+    4 :                   : // (EABI uses r3.w2, we may as well roll with that.)
+    5 :                   : .setcallreg r3.w2
+    6 :                   : 
+    7 :                   : // Programs normally always start at address 0
+    8 :                   : .origin 0
+    9 :                   : 
+   10 :                   : // Saner compare-and-branch mnemonics.  (The "quick" doesn't mean anything, and
+   11 :                   : // more disturbingly lt/gt behave the opposite of what you would expect.)
+   12 :                   : #define blt qbgt
+   13 :                   : #define bgt qblt
+   14 :                   : #define ble qbge
+   15 :                   : #define bge qble
+   16 :                   : #define beq qbeq
+   17 :                   : #define bne qbne
+   18 :                   : #define bbs qbbs
+   19 :                   : #define bbc qbbc
+   20 :                   : 
+   21 :                   : // Generalize the "wait until" macros
+   22 :                   : #define weq bne 0,
+   23 :                   : #define wne beq 0,
+   24 :                   : #define wlt bge 0,
+   25 :                   : #define wgt ble 0,
+   26 :                   : #define wle bgt 0,
+   27 :                   : #define wge blt 0,
+   28 :                   : 
+   29 :                   : // General utility
+   30 :                   : .macro nop
+   31 :                   : 	mov	r0.b0, r0.b0
+   32 :                   : .endm
+   33 :                   : 
+   34 :                   : // For the "set" instruction, using r31 as source operand is treated as zero.
+   35 :                   : // Since this is not very intuitive, use a macro for moving a single-bit value.
+   36 :                   : .macro movbit
+   37 :                   : .mparam dst, bit
+   38 :                   : 	set	dst, r31, bit
+   39 :                   : .endm
+   40 :                   : 
+   41 :                   : // Trigger event (in range 16..31) in interrupt controller
+   42 :                   : .macro sendevent
+   43 :                   : .mparam ev
+   44 :                   : 	mov	r31.w0, ( (ev) & 15 ) | 32
+   45 :                   : .endm
+   46 :                   : 
+   47 :                   : // Delay 2*n cycles (== n * 10ns), where n must be nonzero.
+   48 :                   : .macro delay
+   49 :                   : .mparam n
+   50 :                   : delay_loop:
+   51 :                   : 	sub	n, n, 1
+   52 :                   : 	bne	delay_loop, n, 0
+   53 :                   : .endm
+   54 :                   : 
+   55 :                   : #define DELAY_US 100
+   56 :                   : #define DELAY_MS 100000
+   57 :                   : 
+
